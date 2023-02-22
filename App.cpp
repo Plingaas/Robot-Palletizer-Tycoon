@@ -20,9 +20,9 @@ void run(const int* A, const int* B, const int* C) {
     grid->rotation.set(math::PI*0.5f,0,0);
     scene->add(grid);
 
-    auto robot = AR2::Robot::create();
+    //auto robot = AR2::Robot::create();
 
-    scene->add(robot->j0->mesh);
+    //scene->add(robot->j0->mesh);
 
     {
         auto light = DirectionalLight::create(0xffffff, 0.6f);
