@@ -10,35 +10,52 @@ using namespace AR2;
 
 AR2::Robot::Robot() {
 
-    j0 = new Joint("bin/data/models/j0.stl");
-    j1 = new Joint("bin/data/models/j1.stl");
-    j2 = new Joint("bin/data/models/j2.stl");
-    j3 = new Joint("bin/data/models/j3.stl");
+    j0 = new Joint("bin/data/models/j0_simplified.stl");
+    j1 = new Joint("bin/data/models/j1_very_simplified.stl");
+    j2 = new Joint("bin/data/models/j2_very_simplified.stl");
+    j3 = new Joint("bin/data/models/j3_very_simplified.stl");
+    j4 = new Joint("bin/data/models/j4_simplified.stl");
+    j5 = new Joint("bin/data/models/j5_simplified.stl");
+    j6 = new Joint("bin/data/models/j6_simplified.stl");
 
     j1->set_rotation_axis(z);
     j2->set_rotation_axis(y);
     j3->set_rotation_axis(y);
 
-    j1->set_reverse_rotation(true);
+    j4->set_rotation_axis(x);
+    j5->set_rotation_axis(y);
+    j6->set_rotation_axis(x);
+
+    j1->set_reverse_rotation(false);
     j2->set_reverse_rotation(true);
     j3->set_reverse_rotation(true);
+    j4->set_reverse_rotation(true);
+    j5->set_reverse_rotation(true);
+    j6->set_reverse_rotation(true);
 
     Vector3 j0_offset{0, 0, 0};
     Vector3 j1_offset{0, 0, 87.12};
     Vector3 j2_offset{64.2, 51.4, 82.65};
     Vector3 j3_offset{305, -51.4, 0};
+    Vector3 j4_offset{223.63, 0, 0};
+    Vector3 j5_offset{0, 0, 0};
+    Vector3 j6_offset{36.25, 0, 0};
 
     j0->set_position(j0_offset);
     j1->set_position(j1_offset);
     j2->set_position(j2_offset);
     j3->set_position(j3_offset);
+    j4->set_position(j4_offset);
+    j5->set_position(j5_offset);
+    j6->set_position(j6_offset);
 
     // Create links between joints by using parents
+    j5->mesh->add(j6->mesh);
+    j4->mesh->add(j5->mesh);
+    j3->mesh->add(j4->mesh);
     j2->mesh->add(j3->mesh);
     j1->mesh->add(j2->mesh);
     j0->mesh->add(j1->mesh);
-
-
 
 }
 
@@ -50,7 +67,7 @@ void Robot::go_to_xyz(float x, float y, float z)
     j2->go_to(angles.theta2);
     j3->go_to(angles.theta3);
 
-}
+};
 
 void Robot::go_to_steps(float j1_steps, float j2_steps, float j3_steps)
 {

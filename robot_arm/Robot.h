@@ -29,6 +29,10 @@ namespace AR2 {
         Joint* j1;
         Joint* j2;
         Joint* j3;
+        Joint* j4;
+        Joint* j5;
+        Joint* j6;
+
     private:
 
     };

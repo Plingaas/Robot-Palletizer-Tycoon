@@ -4,18 +4,20 @@
 
 #include "IK.h"
 
-bool isWithinWorkarea(Angles angles) {
+bool isWithinWorkarea(Angles angles)
+{
 
     if (angles.theta1 < J1_LOWER_LIMIT || angles.theta1 > J1_UPPER_LIMIT || isnan(angles.theta1)) return false;
     if (angles.theta2 < J2_LOWER_LIMIT || angles.theta2 > J2_UPPER_LIMIT || isnan(angles.theta2)) return false;
     if (angles.theta3 < J3_LOWER_LIMIT || angles.theta3 > J3_UPPER_LIMIT || isnan(angles.theta3)) return false;
 
     return true;
-}
+};
 
 
 // Solves the inverse kinematics for J1, J2, J3 for a given position (x, y, z).
-Angles IK(float x, float y, float z) {
+Angles IK(float x, float y, float z)
+{
 
     Angles angles{};
 
@@ -50,4 +52,4 @@ Angles IK(float x, float y, float z) {
     angles.legal = isWithinWorkarea(angles);
 
     return angles;
-}
+};
