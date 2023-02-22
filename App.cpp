@@ -3,7 +3,8 @@
 //
 #include "App.h"
 
-void run(int* A, int* B, int* C) {
+void run(const int* A, const int* B, const int* C) {
+
     Canvas canvas{Canvas::Parameters().antialiasing(4)};
     GLRenderer renderer(canvas);
     renderer.setClearColor(Color::aliceblue);
@@ -41,10 +42,10 @@ void run(int* A, int* B, int* C) {
     });
 
 
-
-
     canvas.animate([&](float dt) {
-        robot->go_to_steps(*A, *B, *C);
+
+        // Serial data position
+        //robot->go_to_steps(*A, *B, *C);
         renderer.render(scene, camera);
     });
 }

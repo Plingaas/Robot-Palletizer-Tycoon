@@ -6,9 +6,10 @@
 #define THREEPP_VCPKG_TEST_APP_H
 
 #include <threepp/threepp.hpp>
-#include "RobotArm/Robot.h"
+#include "robot_arm/Robot.h"
+
 using namespace threepp;
 
-void run(int* A, int* B, int* C);
+void run(const int* A, const int* B, const int* C);
 
 #endif //THREEPP_VCPKG_TEST_APP_H

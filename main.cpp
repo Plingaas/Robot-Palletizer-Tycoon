@@ -1,6 +1,6 @@
 
 #include "App.h"
-#include "Device.h"
+#include "serial_communication/Device.h"
 
 #include <thread>
 #include <iostream>
@@ -11,12 +11,12 @@ int main() {
     int B = 0;
     int C = 0;
 
-    auto hmm = [&A, &B, &C]()
+    auto window = [&A, &B, &C]()
     {
         run(&A, &B, &C);
     };
 
-    std::thread app_thread(hmm);
+    std::thread app_thread(window);
 
     auto serial_comm = [&A, &B, &C]()
     {
@@ -43,6 +43,7 @@ int main() {
 
             while (device.isConnected()) {
                 std::string data = device.read();
+
 
                 int A_index = data.find('A');
                 int B_index = data.find('B');
