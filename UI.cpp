@@ -3,65 +3,54 @@
 //
 
 #include "UI.h"
+
 using namespace threepp;
 
-#ifdef HAS_IMGUI
-#include "threepp/extras/imgui/imgui_context.hpp"
+void UI::onRender()
+{
+    ImGui::Begin("Settings");
 
-#include "Kine.hpp"
-#include "ik/CCDSolver.hpp"
+    ImGui::Text("X");
+    ImGui::SameLine();
+    ImGui::DragFloat("##x", &px);
 
-using namespace kine;
+    ImGui::Text("Y");
+    ImGui::SameLine();
+    ImGui::DragFloat("##y", &py);
 
-struct MyUI : imgui_context {
+    ImGui::Text("Z");
+    ImGui::SameLine();
+    ImGui::DragFloat("##z",&pz);
 
-    bool mouseHover = false;
-    bool jointMode = true;
-    bool posMode = false;
-    bool enableController = false;
 
-    Vector3 pos;
-    std::vector<KineLimit> limits;
-    std::vector<float> values;
+    ImGui::NewLine();
 
-    explicit MyUI(const Canvas &canvas, Kine &kine)
-        : imgui_context(canvas.window_ptr()),
-          limits(kine.limits()),
-          values(kine.meanAngles()) {
+    ImDrawList*draw_list = ImGui::GetWindowDrawList();
+    draw_list->AddRectFilled(
+            ImVec2(ImGui::GetWindowPos().x+5, ImGui::GetWindowPos().y+111),
+            ImVec2(ImGui::GetWindowPos().x+90, ImGui::GetWindowPos().y+130),
+            IM_COL32(200, 200, 200, 100)
+            );
+    ImGui::Text("Serial Port"); ImGui::SameLine();
 
-        pos.setFromMatrixPosition(kine.calculateEndEffectorTransformation(values));
+    // Code inspiration from https://github.com/ocornut/imgui/issues/1658
+    if (ImGui::BeginCombo("##combo", current_port))
+    {
+        ports = Serial::availablePorts();
+        for (const std::string &_port : ports)
+        {
+            char* port = const_cast<char *>(_port.c_str());
+            bool is_selected = (current_port == port);
+
+            if (ImGui::Selectable(port, is_selected))
+                current_port = port;
+
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
     }
 
-    void onRender() override {
-
-        ImGui::SetNextWindowPos({}, 0, {});
-        ImGui::SetNextWindowSize({}, 0);
-        ImGui::Begin("Crane3R");
-
-        ImGui::Text("Target angles");
-        ImGui::SliderFloat("j1", &values[0], *limits[0].min(), *limits[0].max());
-        jointMode = jointMode || ImGui::IsItemEdited();
-        ImGui::SliderFloat("j2", &values[1], *limits[1].min(), *limits[1].max());
-        jointMode = jointMode || ImGui::IsItemEdited();
-        ImGui::SliderFloat("j3", &values[2], *limits[2].min(), *limits[2].max());
-        jointMode = jointMode || ImGui::IsItemEdited();
-
-        posMode = !jointMode;
-
-        ImGui::Text("Target pos");
-        ImGui::SliderFloat("px", &pos.x, -10, 10);
-        posMode = posMode || ImGui::IsItemEdited();
-        ImGui::SliderFloat("py", &pos.y, 0, 10);
-        posMode = posMode || ImGui::IsItemEdited();
-        ImGui::SliderFloat("pz", &pos.z, 0, 10);
-        posMode = posMode || ImGui::IsItemEdited();
-
-        jointMode = !posMode;
-
-        ImGui::Checkbox("controller", &enableController);
-
-        mouseHover = ImGui::IsWindowHovered();
-        ImGui::End();
-    }
-};
-#endif
+    mouseHovered = ImGui::IsWindowHovered();
+    ImGui::End();
+}

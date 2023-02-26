@@ -19,12 +19,6 @@ namespace AR2 {
 
         Robot();
 
-        static std::shared_ptr<Robot> create() {
-            return std::make_shared<Robot>();
-        }
-
-        void go_to_xyz(float x, float y, float z);
-        void go_to_steps(float j1_steps, float j2_steps, float j3_steps);
         Joint* j0;
         Joint* j1;
         Joint* j2;
@@ -32,9 +26,21 @@ namespace AR2 {
         Joint* j4;
         Joint* j5;
         Joint* j6;
+        Joint* gripper;
+
+        static std::shared_ptr<Robot> create() {
+            return std::make_shared<Robot>();
+        }
+
+        void move_base_to(Vector3 pos);
+        void go_to_xyz(float x, float y, float z);
+        void go_to_xyz(Vector3 pos);
+        void go_to_steps(float j1_steps, float j2_steps, float j3_steps);
+
 
     private:
-
+        Vector3 base_pos;
+        void go_to_angles(Angles angles);
     };
 }
 

@@ -10,18 +10,18 @@ using namespace AR2;
 
 AR2::Robot::Robot() {
 
-    j0 = new Joint("bin/data/models/j0_simplified.stl");
-    j1 = new Joint("bin/data/models/j1_very_simplified.stl");
-    j2 = new Joint("bin/data/models/j2_very_simplified.stl");
-    j3 = new Joint("bin/data/models/j3_very_simplified.stl");
-    j4 = new Joint("bin/data/models/j4_simplified.stl");
-    j5 = new Joint("bin/data/models/j5_simplified.stl");
-    j6 = new Joint("bin/data/models/j6_simplified.stl");
+    j0 = new Joint(j0_geo, Color::pink);
+    j1 = new Joint(j1_geo, Color::purple);
+    j2 = new Joint(j2_geo, Color::pink);
+    j3 = new Joint(j3_geo, Color::purple);
+    j4 = new Joint(j4_geo, Color::pink);
+    j5 = new Joint(j5_geo, Color::purple);
+    j6 = new Joint(j6_geo, Color::pink);
+    gripper = new Joint(gripper_geo, Color::purple);
 
     j1->set_rotation_axis(z);
     j2->set_rotation_axis(y);
     j3->set_rotation_axis(y);
-
     j4->set_rotation_axis(x);
     j5->set_rotation_axis(y);
     j6->set_rotation_axis(x);
@@ -37,9 +37,10 @@ AR2::Robot::Robot() {
     Vector3 j1_offset{0, 0, 87.12};
     Vector3 j2_offset{64.2, 51.4, 82.65};
     Vector3 j3_offset{305, -51.4, 0};
-    Vector3 j4_offset{223.63, 0, 0};
+    Vector3 j4_offset{222.63, 0, 0};
     Vector3 j5_offset{0, 0, 0};
     Vector3 j6_offset{36.25, 0, 0};
+    Vector3 gripper_offset{0,0,0};
 
     j0->set_position(j0_offset);
     j1->set_position(j1_offset);
@@ -48,8 +49,10 @@ AR2::Robot::Robot() {
     j4->set_position(j4_offset);
     j5->set_position(j5_offset);
     j6->set_position(j6_offset);
+    gripper->set_position(gripper_offset);
 
     // Create links between joints by using parents
+    j6->mesh->add(gripper->mesh);
     j5->mesh->add(j6->mesh);
     j4->mesh->add(j5->mesh);
     j3->mesh->add(j4->mesh);
@@ -59,23 +62,50 @@ AR2::Robot::Robot() {
 
 }
 
+void Robot::move_base_to(Vector3 pos)
+{
+    base_pos = pos;
+    j0->mesh->position = pos;
+}
+
 void Robot::go_to_xyz(float x, float y, float z)
 {
-    Angles angles = IK(x, y, z);
+    go_to_xyz({x, y, z});
+}
 
-    j1->go_to(angles.theta1);
-    j2->go_to(angles.theta2);
-    j3->go_to(angles.theta3);
+void Robot::go_to_xyz(Vector3 pos)
+{
+    Vector3 relative_pos = pos - base_pos;
 
-};
+    if (relative_pos.length() > 650.0f)
+        relative_pos.setLength(650.0f);
+
+    Angles angles = IK(relative_pos.x, relative_pos.y, relative_pos.z);
+    go_to_angles(angles);
+}
 
 void Robot::go_to_steps(float j1_steps, float j2_steps, float j3_steps)
 {
-    float j1_angle = j1_steps/J1_STEPS_PER_DEG;
-    float j2_angle = j2_steps/J2_STEPS_PER_DEG;
-    float j3_angle = j3_steps/J3_STEPS_PER_DEG;
+    float j1_angle = j1_steps * TO_RADIANS/J1_STEPS_PER_DEG;
+    float j2_angle = j2_steps * TO_RADIANS/J2_STEPS_PER_DEG;
+    float j3_angle = j3_steps * TO_RADIANS/J3_STEPS_PER_DEG;
 
-    j1->go_to(j1_angle);
-    j2->go_to(j2_angle);
-    j3->go_to(j3_angle);
-};
+    Angles angles = IK3_6(j1_angle, j2_angle, j3_angle);
+
+    go_to_angles(angles);
+}
+
+void Robot::go_to_angles(Angles angles)
+{
+
+    if (AR2::within_work_area(angles))
+    {
+        j1->go_to(angles.theta1);
+        j2->go_to(angles.theta2);
+        j3->go_to(angles.theta3);
+        j4->go_to(angles.theta4);
+        j5->go_to(angles.theta5);
+        j6->go_to(angles.theta6);
+    }
+}
+

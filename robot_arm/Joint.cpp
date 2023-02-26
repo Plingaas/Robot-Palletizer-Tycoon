@@ -6,11 +6,12 @@
 
 using namespace AR2;
 
-Joint::Joint(const std::string &path)
+
+Joint::Joint(std::shared_ptr<BufferGeometry> &geometry, Color color)
 {
-    STLLoader loader;
-    auto geometry = loader.load(path);
+
     auto material = MeshPhongMaterial::create();
+    material->color = color;
 
     mesh = Mesh::create(geometry, material);
 };
@@ -31,10 +32,7 @@ void Joint::set_position(Vector3 pos)
 
 };
 
-void Joint::go_to(float degrees) {
-
-    // Convert to radians
-    float rad = degrees*math::DEG2RAD;
+void Joint::go_to(float rad) {
 
     if (reverse_rotation)
         rad = -rad;

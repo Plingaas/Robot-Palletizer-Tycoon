@@ -7,7 +7,24 @@
 
 #include "threepp/threepp.hpp"
 #include "threepp/extras/imgui/imgui_context.hpp"
+#include "serial_communication/Serial.h"
 
+using namespace threepp;
 
+struct UI : imgui_context {
+
+public:
+    explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()){};
+
+    float px = 0.0f;
+    float py = 0.0f;
+    float pz = 0.0f;
+
+    bool mouseHovered = false;
+
+    void onRender();
+    std::vector<std::string> ports = {};
+    char* current_port = nullptr;
+};
 
 #endif //THREEPP_VCPKG_TEST_UI_H

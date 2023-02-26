@@ -5,6 +5,11 @@
     {
       "name": "imgui",
       "features": ["glfw-binding", "opengl3-binding"]
-    }
+    },
+    "orocos-kdl",
+    "nlopt",
+    "eigen3",
+    "spdlog",
+    "boost"
   ]
 }
