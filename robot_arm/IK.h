@@ -10,12 +10,12 @@ using namespace threepp;
 namespace AR2 {
 
     // LINK LENGTHS
-    const float a1 = 169.77;
-    const float a2 = 64.2;
-    const float a3 = 305;
-    const float a4 = 222.63;
-    const float a5 = 36.25;
-    const float a6 = 43.6; // End effector length
+    const float a1 = 169.77f;
+    const float a2 = 64.2f;
+    const float a3 = 305.0f;
+    const float a4 = 222.63f;
+    const float a5 = 36.25f;
+    const float a6 = 52.0; // End effector full length is 64
 
     // LINK MAX ROTATION LIMITS
     const float J1_LOWER_LIMIT = -2.96705972839f; // -170 deg
