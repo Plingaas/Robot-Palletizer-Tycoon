@@ -10,14 +10,14 @@ using namespace AR2;
 
 AR2::Robot::Robot() {
 
-    j0 = new Joint(j0_geo, Color::pink);
-    j1 = new Joint(j1_geo, Color::purple);
-    j2 = new Joint(j2_geo, Color::pink);
-    j3 = new Joint(j3_geo, Color::purple);
-    j4 = new Joint(j4_geo, Color::pink);
-    j5 = new Joint(j5_geo, Color::purple);
-    j6 = new Joint(j6_geo, Color::pink);
-    gripper = new Joint(gripper_geo, Color::purple);
+    j0 = Joint::create(j0_geo, Color::pink);
+    j1 = Joint::create(j1_geo, Color::purple);
+    j2 = Joint::create(j2_geo, Color::pink);
+    j3 = Joint::create(j3_geo, Color::purple);
+    j4 = Joint::create(j4_geo, Color::pink);
+    j5 = Joint::create(j5_geo, Color::purple);
+    j6 = Joint::create(j6_geo, Color::pink);
+    gripper = Joint::create(gripper_geo, Color::purple);
 
     j1->set_rotation_axis(z);
     j2->set_rotation_axis(y);
@@ -40,7 +40,7 @@ AR2::Robot::Robot() {
     Vector3 j4_offset{222.63, 0, 0};
     Vector3 j5_offset{0, 0, 0};
     Vector3 j6_offset{36.25, 0, 0};
-    Vector3 gripper_offset{0,0,0};
+    Vector3 gripper_offset{64,0,0};
 
     j0->set_position(j0_offset);
     j1->set_position(j1_offset);
@@ -77,9 +77,6 @@ void Robot::go_to_xyz(Vector3 pos)
 {
     Vector3 relative_pos = pos - base_pos;
 
-    if (relative_pos.length() > 650.0f)
-        relative_pos.setLength(650.0f);
-
     Angles angles = IK(relative_pos.x, relative_pos.y, relative_pos.z);
     go_to_angles(angles);
 }
@@ -108,4 +105,5 @@ void Robot::go_to_angles(Angles angles)
         j6->go_to(angles.theta6);
     }
 }
+
 
