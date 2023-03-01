@@ -16,9 +16,7 @@ struct UI : imgui_context {
 public:
     explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()){};
 
-    float px = 0.0f;
-    float py = 0.0f;
-    float pz = 0.0f;
+    Vector3 pos;
 
     bool mouseHovered = false;
 

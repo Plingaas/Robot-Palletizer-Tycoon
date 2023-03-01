@@ -12,15 +12,15 @@ void UI::onRender()
 
     ImGui::Text("X");
     ImGui::SameLine();
-    ImGui::DragFloat("##x", &px);
+    ImGui::DragFloat("##x", &pos.x);
 
     ImGui::Text("Y");
     ImGui::SameLine();
-    ImGui::DragFloat("##y", &py);
+    ImGui::DragFloat("##y", &pos.y);
 
     ImGui::Text("Z");
     ImGui::SameLine();
-    ImGui::DragFloat("##z",&pz);
+    ImGui::DragFloat("##z",&pos.z);
 
 
     ImGui::NewLine();
