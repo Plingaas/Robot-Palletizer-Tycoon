@@ -29,6 +29,11 @@ namespace AR2 {
     public:
         std::shared_ptr<Mesh> mesh;
 
+        static std::unique_ptr<Joint> create(std::shared_ptr<BufferGeometry> &geometry, Color color)
+        {
+            return std::make_unique<Joint>(geometry, color);
+        }
+
         explicit Joint(std::shared_ptr<BufferGeometry> &geometry, Color color);
         void set_rotation_axis(Axis axis);
         void set_reverse_rotation(bool reverse);
