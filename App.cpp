@@ -18,10 +18,7 @@ void run(int *A, const int *B, const int *C, char** port) {
     OrbitControls controls{camera, canvas};
     controls.enableKeys = false;
 
-    auto grid = GridHelper::create(2000, 10, Color::red);
-    grid->rotation.set(math::PI*0.5f,0,0);
-    grid->position.set(0, 0, -200);
-    scene->add(grid);
+
 
 
     auto floor = BoxGeometry::create(2000, 2000, 0.1);
@@ -73,28 +70,16 @@ void run(int *A, const int *B, const int *C, char** port) {
         renderer.setSize(size);
     });
 
-    Vector3 target {628.0, 0, 169.77};
-    float t = 0;
-    //Listener l{t, &target};
-    //canvas.addKeyListener(&l);
-
     UI ui(canvas);
-
-    float total = t;
-    bool a = false;
-    bool b = true;
 
     canvas.animate([&](float dt) {
         // Serial data position
         robot->go_to_steps(*A, *B, *C);
 
-        target.x = ui.px;
-        target.y = ui.py;
-        target.z = ui.pz;
 
         controls.enableRotate = !ui.mouseHovered;
 
-        robot2->go_to_xyz(ui.px, ui.py, ui.pz);
+        robot2->go_to_xyz(ui.pos);
         renderer.render(scene, camera);
 
         ui.render();
