@@ -40,7 +40,7 @@ AR2::Robot::Robot() {
     Vector3 j4_offset{222.63, 0, 0};
     Vector3 j5_offset{0, 0, 0};
     Vector3 j6_offset{36.25, 0, 0};
-    Vector3 gripper_offset{64,0,0};
+    Vector3 gripper_offset{0,0,0};
 
     j0->set_position(j0_offset);
     j1->set_position(j1_offset);
