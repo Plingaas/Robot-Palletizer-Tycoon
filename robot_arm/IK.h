@@ -15,7 +15,8 @@ namespace AR2 {
     const float a3 = 305.0f;
     const float a4 = 222.63f;
     const float a5 = 36.25f;
-    const float a6 = 52.0; // End effector full length is 64
+    const float a6 = 52.0f; // End effector full length is 64
+    const float a7 = 32.66f; // End effector pinch offset;
 
     // LINK MAX ROTATION LIMITS
     const float J1_LOWER_LIMIT = -2.96705972839f; // -170 deg
