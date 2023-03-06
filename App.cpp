@@ -72,6 +72,13 @@ void run(int *A, const int *B, const int *C, char** port) {
 
     UI ui(canvas);
 
+    auto target_geo = SphereGeometry::create(5);
+    auto target_mat = MeshPhongMaterial::create();
+    target_mat->color = Color::red;
+    auto target_mesh = Mesh::create(target_geo, target_mat);
+    target_mesh->position.set(0, 0, 0);
+    scene->add(target_mesh);
+
     canvas.animate([&](float dt) {
         // Serial data position
         robot->go_to_steps(*A, *B, *C);
@@ -79,7 +86,12 @@ void run(int *A, const int *B, const int *C, char** port) {
 
         controls.enableRotate = !ui.mouseHovered;
 
-        robot2->set_target(ui.pos);
+        target_mesh->position = ui.pos;
+        if (ui.move_btn_clicked)
+        {
+            robot2->set_target(ui.pos);
+            ui.move_btn_clicked = false;
+        }
         robot2->update(dt);
 
 
