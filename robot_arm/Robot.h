@@ -6,7 +6,8 @@
 #define THREEPP_VCPKG_TEST_ROBOT_H
 #include "threepp/threepp.hpp"
 #include "Joint.h"
-#include "IK.h"
+#include "tools/IK.h"
+#include "tools/PID.h"
 
 using namespace threepp;
 
@@ -26,22 +27,30 @@ namespace AR2 {
         std::unique_ptr<Joint> j6;
         std::unique_ptr<Joint> gripper;
 
+        bool PID_active;
+
         static std::shared_ptr<Robot> create() {
             return std::make_shared<Robot>();
         }
 
+        void update(float dt);
         void move_base_to(Vector3 pos);
-        void go_to_xyz(float x, float y, float z);
-        void go_to_xyz(Vector3 pos);
+        void go_to(float x, float y, float z);
+        void go_to(Vector3 pos);
+        void move_to(float x, float y, float z);
+        void move_to(Vector3 rel);
         void go_to_steps(float j1_steps, float j2_steps, float j3_steps);
+
+        void set_target(Vector3 target);
 
         explicit Robot();
 
     private:
-
         Vector3 base_pos;
-        void go_to_angles(Angles angles);
-
+        Vector3 target_pos;
+        Vector3 current_pos;
+        PID PID_controller;
+        void go_to_angles(Angles angles) const;
     };
 
 }
