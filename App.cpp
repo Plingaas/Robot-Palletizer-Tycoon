@@ -79,7 +79,10 @@ void run(int *A, const int *B, const int *C, char** port) {
 
         controls.enableRotate = !ui.mouseHovered;
 
-        robot2->go_to_xyz(ui.pos);
+        robot2->set_target(ui.pos);
+        robot2->update(dt);
+
+
         renderer.render(scene, camera);
 
         ui.render();
