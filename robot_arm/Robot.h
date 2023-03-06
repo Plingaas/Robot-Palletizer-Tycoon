@@ -41,11 +41,16 @@ namespace AR2 {
         void move_to(Vector3 rel);
         void go_to_steps(float j1_steps, float j2_steps, float j3_steps);
 
+        void set_colors(Color _color1, Color _color2);
         void set_target(Vector3 target);
+        void set_pid_parameters(float kp, float ti, float td);
 
         explicit Robot();
 
     private:
+        Color color1;
+        Color color2;
+
         Vector3 base_pos;
         Vector3 target_pos;
         Vector3 current_pos;

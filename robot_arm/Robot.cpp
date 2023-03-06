@@ -40,7 +40,7 @@ AR2::Robot::Robot() {
     Vector3 j4_offset{222.63, 0, 0};
     Vector3 j5_offset{0, 0, 0};
     Vector3 j6_offset{36.25, 0, 0};
-    Vector3 gripper_offset{0,0,0};
+    Vector3 gripper_offset{64,0,0};
 
     j0->set_position(j0_offset);
     j1->set_position(j1_offset);
@@ -59,6 +59,9 @@ AR2::Robot::Robot() {
     j2->mesh->add(j3->mesh);
     j1->mesh->add(j2->mesh);
     j0->mesh->add(j1->mesh);
+
+    PID_controller.params().set_params(0.02f, 0.0f, 0.0f);
+    PID_controller.setWindupGuard(0.005f);
 }
 
 void Robot::move_base_to(Vector3 pos)
@@ -107,12 +110,9 @@ void Robot::go_to_angles(Angles angles) const
 
 void Robot::update(float dt)
 {
-
     if (PID_active)
     {
-
         Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
-        std::cout << new_pos << std::endl;
         move_to(new_pos);
     }
 
@@ -131,4 +131,15 @@ void Robot::move_to(Vector3 rel)
 void Robot::set_target(Vector3 target)
 {
     target_pos = target;
+}
+
+void Robot::set_pid_parameters(float kp, float ti, float td)
+{
+    PID_controller.params().set_params(kp, ti, td);
+}
+
+void Robot::set_colors(Color _color1, Color _color2)
+{
+    color1 = _color1;
+    color2 = _color2;
 }
