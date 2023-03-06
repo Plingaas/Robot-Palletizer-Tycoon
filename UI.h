@@ -17,6 +17,7 @@ public:
     explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()){};
 
     Vector3 pos;
+    bool move_btn_clicked;
 
     bool mouseHovered = false;
 
