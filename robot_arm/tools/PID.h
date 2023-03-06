@@ -16,6 +16,13 @@ struct PIDParameters {
     float kp;
     float ti;
     float td;
+
+    void set_params( float _kp, float _ti, float _td)
+    {
+        kp = _kp;
+        ti = _ti;
+        td = _td;
+    };
 };
 
 class PID {
@@ -38,7 +45,6 @@ public:
         if (windup_guard_) {
             for (int i = 0; i < 3; i++) {
                 math::clamp(integral_[i], -windup_guard_.value(), windup_guard_.value());
-
             }
         }
 
