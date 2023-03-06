@@ -17,11 +17,14 @@ void UI::onRender()
     ImGui::Text("Y");
     ImGui::SameLine();
     ImGui::DragFloat("##y", &pos.y);
+    ImGui::SameLine();
+    if (ImGui::Button("Move")) {
+        move_btn_clicked = true;
+    }
 
     ImGui::Text("Z");
     ImGui::SameLine();
     ImGui::DragFloat("##z",&pos.z);
-
 
     ImGui::NewLine();
 

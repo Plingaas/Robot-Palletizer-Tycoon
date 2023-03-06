@@ -60,6 +60,8 @@ AR2::Robot::Robot() {
     j1->mesh->add(j2->mesh);
     j0->mesh->add(j1->mesh);
 
+    PID_controller.params().set_params(0.02f, 0.0f, 0.0f);
+    PID_controller.setWindupGuard(0.005f);
 }
 
 void Robot::move_base_to(Vector3 pos)
@@ -68,17 +70,18 @@ void Robot::move_base_to(Vector3 pos)
     j0->mesh->position = pos;
 }
 
-void Robot::go_to_xyz(float x, float y, float z)
+void Robot::go_to(float x, float y, float z)
 {
-    go_to_xyz({x, y, z});
+    go_to({x, y, z});
 }
 
-void Robot::go_to_xyz(Vector3 pos)
+void Robot::go_to(Vector3 pos)
 {
     Vector3 relative_pos = pos - base_pos;
-
     Angles angles = IK(relative_pos.x, relative_pos.y, relative_pos.z);
+
     go_to_angles(angles);
+    current_pos = pos;
 }
 
 void Robot::go_to_steps(float j1_steps, float j2_steps, float j3_steps)
@@ -92,9 +95,8 @@ void Robot::go_to_steps(float j1_steps, float j2_steps, float j3_steps)
     go_to_angles(angles);
 }
 
-void Robot::go_to_angles(Angles angles)
+void Robot::go_to_angles(Angles angles) const
 {
-
     if (AR2::within_work_area(angles))
     {
         j1->go_to(angles.theta1);
@@ -106,4 +108,38 @@ void Robot::go_to_angles(Angles angles)
     }
 }
 
+void Robot::update(float dt)
+{
+    if (PID_active)
+    {
+        Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
+        move_to(new_pos);
+    }
 
+}
+
+void Robot::move_to(float x, float y, float z)
+{
+    move_to({x, y, z});
+}
+
+void Robot::move_to(Vector3 rel)
+{
+    go_to(current_pos + rel);
+}
+
+void Robot::set_target(Vector3 target)
+{
+    target_pos = target;
+}
+
+void Robot::set_pid_parameters(float kp, float ti, float td)
+{
+    PID_controller.params().set_params(kp, ti, td);
+}
+
+void Robot::set_colors(Color _color1, Color _color2)
+{
+    color1 = _color1;
+    color2 = _color2;
+}
