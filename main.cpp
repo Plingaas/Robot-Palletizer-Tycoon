@@ -6,12 +6,15 @@
 
 int main() {
 
+    // Variables for storing serial data.
     int A = 0;
     int B = 0;
     int C = 0;
+
     char* port = nullptr;
     Device device;
 
+    // Main application
     auto window = [&A, &B, &C, &port]()
     {
         run(&A, &B, &C, &port);
@@ -30,6 +33,8 @@ int main() {
         device.connect();
 
         while (device.isConnected()) {
+
+            // Obtain data from string
             std::string data = device.read();
 
             int A_index = data.find('A');
@@ -42,31 +47,7 @@ int main() {
             C = std::stoi(data.substr(C_index + 1, end - C_index - 1));
 
         }
-
-
-        /*
-        PORTS = Serial::availablePorts();
-
-        std::cout << "Available ports: " << PORTS.size() << std::endl;
-        if (!PORTS.empty()) {
-            for (const std::string& port : PORTS) {
-                std::cout << port << std::endl;
-            }
-
-            std::cout << "Choose port " << std::endl;
-            std::string port = R"(\\.\COM)";
-
-            std::string input;
-            std::cin >> input;
-            port += input;
-
-            const char* _port = port.c_str();
-
-
-
-
-
-        }*/
+        
     };
 
     std::thread serial_thread(serial_comm);

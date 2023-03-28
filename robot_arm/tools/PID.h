@@ -1,6 +1,8 @@
 //
 // Created by peter on 3/6/2023.
 //
+// Code from https://github.com/markaren/threepp/blob/master/examples/libs/utility/PID.hpp
+// Slightly modified
 
 #ifndef ROBOTCONTROLLER_PID_H
 #define ROBOTCONTROLLER_PID_H
