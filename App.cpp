@@ -18,9 +18,6 @@ void run(int *A, const int *B, const int *C, char** port) {
     OrbitControls controls{camera, canvas};
     controls.enableKeys = false;
 
-
-
-
     auto floor = BoxGeometry::create(2000, 2000, 0.1);
     auto floor_material = MeshBasicMaterial::create();
     floor_material->color = 0x111111;
@@ -30,12 +27,14 @@ void run(int *A, const int *B, const int *C, char** port) {
 
     renderer.render(scene, camera);
 
-    auto robot = AR2::Robot::create();
-    scene->add(robot->j0->mesh);
+    List<std::shared_ptr<AR2::Robot>> robots;
 
-    auto robot2 = AR2::Robot::create();
-    robot2->move_base_to({500, 500, -200});
-    scene->add(robot2->j0->mesh);
+    robots.insertAtTail(AR2::Robot::create());
+    scene->add(robots.getHeadValue()->get_mesh());
+
+    robots.insertAtTail(AR2::Robot::create());
+    robots.getTailValue()->move_base_to({500, 500, -200});
+    scene->add(robots.getTailValue()->get_mesh());
 
 
     auto geo_base = CylinderGeometry::create(75, 100, 200, 50);
@@ -51,7 +50,6 @@ void run(int *A, const int *B, const int *C, char** port) {
         light->position.set(100,100,100);
         scene->add(light);
     }
-
     {
         auto light = DirectionalLight::create(0xffffff, 0.4f);
         light->position.set(-100,-100,100);
@@ -62,7 +60,6 @@ void run(int *A, const int *B, const int *C, char** port) {
         auto light = AmbientLight::create(0xffffff, 0.6f);
         scene->add(light);
     }
-
 
     canvas.onWindowResize([&](WindowSize size) {
         camera->aspect = size.getAspect();
@@ -79,20 +76,56 @@ void run(int *A, const int *B, const int *C, char** port) {
     target_mesh->position.set(0, 0, 0);
     scene->add(target_mesh);
 
+
+    // Key Listener
+    float t = 0;
+    Listener listener{t};
+    canvas.addKeyListener(&listener);
+
+    // Mouse Listener
+    float t2 = 0;
+    MListener mlistener{t2};
+    canvas.addMouseListener(&mlistener);
+
+    // Mouse Ray
+    Vector2 mouse{-Infinity<float>, -Infinity<float>};
+    MouseMoveListener l([&](Vector2 pos) {
+        // calculate mouse position in normalized device coordinates
+        // (-1 to +1) for both components
+
+        auto size = canvas.getSize();
+        mouse.x = (pos.x / static_cast<float>(size.width)) * 2 - 1;
+        mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
+    });
+    canvas.addMouseListener(&l);
+    Raycaster raycaster;
+
     canvas.animate([&](float dt) {
         // Serial data position
-        robot->go_to_steps(*A, *B, *C);
+        robots.getHead()->value->go_to_steps(*A, *B, *C);
 
+        // Create robot when conditions met
+        bool createRobot = listener.current == listener.n_ && mlistener.LEFTCLICK;
+        if (createRobot) {
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                listener.current = 0;
+                robots.insertAtTail(AR2::Robot::create());
+                robots.getTailValue()->move_base_to(intersects.front().point);
+                scene->add(robots.getTailValue()->get_mesh());
+            }
+        }
 
-        controls.enableRotate = !ui.mouseHovered;
+        controls.enabled = !ui.mouseHovered;
 
         target_mesh->position = ui.pos;
         if (ui.move_btn_clicked)
         {
-            robot2->set_target(ui.pos);
+            robots.getTail()->value->set_target(ui.pos);
             ui.move_btn_clicked = false;
         }
-        robot2->update(dt);
+        robots.getTail()->value->update(dt);
 
 
         renderer.render(scene, camera);

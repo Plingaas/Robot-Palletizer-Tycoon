@@ -6,11 +6,13 @@
 #define THREEPP_VCPKG_TEST_APP_H
 #include "threepp/extras/imgui/imgui_context.hpp"
 
-#include <threepp/threepp.hpp>
+#include "threepp/threepp.hpp"
+#include "threepp/core/Raycaster.hpp" // No idea why this is needed?
 #include "robot_arm/Robot.h"
 #include "UI.h"
 #include "Listener.h"
 #include "serial_communication/Serial.h"
+#include "LinkedList.h"
 
 using namespace threepp;
 
