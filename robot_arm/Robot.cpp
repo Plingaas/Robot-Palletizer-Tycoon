@@ -78,7 +78,7 @@ void Robot::go_to(float x, float y, float z)
 void Robot::go_to(Vector3 pos)
 {
     Vector3 relative_pos = pos - base_pos;
-    Angles angles = IK(relative_pos.x, relative_pos.y, relative_pos.z);
+    Angles angles = IK(relative_pos);
 
     go_to_angles(angles);
     current_pos = pos;
@@ -110,20 +110,33 @@ void Robot::go_to_angles(Angles angles) const
 
 void Robot::update(float dt)
 {
-    if (PID_active)
-    {
-        Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
-        move_to(new_pos);
+
+    if (program_running) {
+        program.update(dt);
+        if (PID_active)
+        {
+            Vector3 new_pos = PID_controller.regulate(program.position, current_pos, dt);
+            move(new_pos);
+        } else {
+            go_to(program.position);
+        }
     }
-
+    else
+    {
+        if (PID_active)
+        {
+            Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
+            move(new_pos);
+        }
+    }
 }
 
-void Robot::move_to(float x, float y, float z)
+void Robot::move(float x, float y, float z)
 {
-    move_to({x, y, z});
+    move({x, y, z});
 }
 
-void Robot::move_to(Vector3 rel)
+void Robot::move(Vector3 rel)
 {
     go_to(current_pos + rel);
 }
@@ -142,4 +155,9 @@ void Robot::set_colors(Color _color1, Color _color2)
 {
     color1 = _color1;
     color2 = _color2;
+}
+
+void Robot::run_program(bool state)
+{
+    program_running = state;
 }
