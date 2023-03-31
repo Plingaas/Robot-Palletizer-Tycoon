@@ -222,6 +222,13 @@ void Robot::attach_conveyor(ConveyorBelt* conveyor_)
     pick_pos = conveyor->position.clone() + Vector3{0.0f, -100.0f, 196.0f};
     program.generate_sequence(pick_pos, false);
 
+    if (pallet)
+    {
+        rest_pos = pick_pos + (pallet->corner_pos - pick_pos)*0.5f;
+        rest_pos.z = pick_pos.z + 100.0f;
+        program.set_rest_position(rest_pos);
+    }
+
 }
 
 void Robot::pick_up()
