@@ -18,7 +18,7 @@ void run(int *A, const int *B, const int *C, char** port) {
     OrbitControls controls{camera, canvas};
     controls.enableKeys = false;
 
-    auto floor = BoxGeometry::create(2000, 2000, 0.1);
+    auto floor = BoxGeometry::create(5000, 5000, 0.1);
     auto floor_material = MeshBasicMaterial::create();
     floor_material->color = 0x111111;
     auto floor_mesh = Mesh::create(floor, floor_material);
@@ -27,12 +27,12 @@ void run(int *A, const int *B, const int *C, char** port) {
 
     {
         auto light = DirectionalLight::create(0xffffff, 0.4f);
-        light->position.set(100,100,100);
+        light->position.set(1000,1000,1000);
         scene->add(light);
     }
     {
         auto light = DirectionalLight::create(0xffffff, 0.4f);
-        light->position.set(-100,-100,100);
+        light->position.set(-1000,-1000,1000);
         scene->add(light);
     }
 
@@ -93,7 +93,6 @@ void run(int *A, const int *B, const int *C, char** port) {
     robots.getTailValue()->attach_pallet(&pallet);
 
     //////////////////
-
     robots.insertAtTail(AR2::Robot::create());
     robots.getTailValue()->move_base_to({1000.0f, 0.0f, -200.0f});
     scene->add(robots.getTailValue()->get_mesh());
@@ -111,7 +110,7 @@ void run(int *A, const int *B, const int *C, char** port) {
     scene->add(pallet2.mesh);
     robots.getTailValue()->attach_pallet(&pallet2);
 
-
+    ////////////////
 
     float MONEY = 0.0f;
     AR2::Robot::money = &MONEY;
@@ -136,6 +135,8 @@ void run(int *A, const int *B, const int *C, char** port) {
     canvas.animate([&](float dt) {
         controls.enabled = !ui.mouseHovered;
 
+        auto node = robots.getHead();
+
         if (listener.current == listener.t_)
         {
             robots.getHeadValue()->upgrade_speed(1.1f);
@@ -152,7 +153,53 @@ void run(int *A, const int *B, const int *C, char** port) {
             listener.current = 0;
         }
 
-        auto node = robots.getHead();
+        bool create_robot = listener.current == listener.b_ && mlistener.LEFTCLICK;
+        if (create_robot) {
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                listener.current = 0;
+
+                Vector3 world_pos = intersects.front().point;
+
+                robots.insertAtTail(AR2::Robot::create());
+                robots.getTailValue()->move_base_to(world_pos);
+                scene->add(robots.getTailValue()->get_mesh());
+                robots.getTailValue()->gripper->mesh->visible = false;
+                robots.getTailValue()->scene = scene;
+            }
+        }
+
+        bool create_conveyor = listener.current == listener.n_ && mlistener.LEFTCLICK;
+        if (create_conveyor) {
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                listener.current = 0;
+
+                Vector3 world_pos = intersects.front().point;
+
+                auto conveyor_belt3 = new ConveyorBelt(100.0f, {world_pos.x, world_pos.y, -100.0f});
+                scene->add(conveyor_belt3->conveyor);
+                conveyor_belt3->scene_ = scene;
+                robots.getTailValue()->attach_conveyor(conveyor_belt3);
+            }
+        }
+
+        bool create_pallet = listener.current == listener.m_ && mlistener.LEFTCLICK;
+        if (create_pallet) {
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                listener.current = 0;
+
+                Vector3 world_pos = intersects.front().point;
+                auto pallet3 = new EuroPallet();
+                pallet3->set_position(world_pos.x, world_pos.y, -200.0f);
+                scene->add(pallet3->mesh);
+                robots.getTailValue()->attach_pallet(pallet3);
+            }
+        }
 
         while (node != nullptr)
         {

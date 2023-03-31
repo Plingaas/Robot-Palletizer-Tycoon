@@ -27,8 +27,9 @@ int main() {
 
         while (port == nullptr)
         {
-
+            std::cout << "";
         }
+
         device.setPort(port);
         device.connect();
 

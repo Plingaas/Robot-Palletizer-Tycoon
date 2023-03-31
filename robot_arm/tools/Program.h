@@ -15,7 +15,7 @@ class Program {
 
 public:
 
-    float r = 0.05f;
+    float r = 0.7f;
     std::vector<Vector4> program = {{0.0f, -350.0f, 200.0f, 1.0f*r},
                                     {300.0f, -100.0f, 146.0f, 1.0f*r},
                                     {300.0f, -100.0f, 146.0f, 0.25f*r},

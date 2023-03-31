@@ -14,7 +14,7 @@ void Program::generate_sequence(Vector3 pos, bool drop, float z_offset)
     pos.z -= z_offset;
     sequence.emplace_back(Vector4{pos.x, pos.y, pos.z,0.5f*r});
     sequence.emplace_back(Vector4{pos.x, pos.y, pos.z,0.25f*r});
-    pos.z += z_offset*3;
+    pos.z += z_offset;
     sequence.emplace_back(Vector4{pos.x, pos.y, pos.z,0.5f*r});
     sequence.emplace_back(Vector4{pos.x, pos.y, pos.z,0.25f*r});
 

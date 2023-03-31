@@ -24,8 +24,8 @@ public:
 
     Vector3 position{};
     Vector3 start_offset{};
-    float spawn_rate = 0.1f; // s/spawn
-    float speed = 2000.0f; // mm/s
+    float spawn_rate = 1.0f; // s/spawn
+    float speed = 250.0f; // mm/s
     bool pause = false;
 
     float time_since_last_spawn = spawn_rate;

@@ -111,7 +111,12 @@ void Robot::go_to_angles(Angles angles) const
 
 void Robot::update(float dt)
 {
+    if (conveyor == nullptr || pallet == nullptr)
+        return;
+
     conveyor->update(dt);
+    conveyor_logic();
+
     if (program_running) {
         program.update(dt);
 
@@ -127,7 +132,6 @@ void Robot::update(float dt)
         }
     }
 
-    conveyor_logic();
 
     // Not sure if this will be used
     /*else

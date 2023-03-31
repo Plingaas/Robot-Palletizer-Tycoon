@@ -34,8 +34,8 @@ namespace AR2 {
         bool PID_active = true;
         inline static float *money = nullptr;
         std::shared_ptr<Scene> scene;
-        ConveyorBelt* conveyor;
-        EuroPallet* pallet;
+        ConveyorBelt* conveyor = nullptr;
+        EuroPallet* pallet = nullptr;
         Vector3 rest_pos{};
         Vector3 pick_pos{};
         Vector3 drop_pos{};
