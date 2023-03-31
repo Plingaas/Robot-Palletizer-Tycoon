@@ -62,6 +62,7 @@ AR2::Robot::Robot() {
 
     PID_controller.params().set_params(0.2f, 0.0005f, 0.0f);
     PID_controller.setWindupGuard(0.003f);
+
 }
 
 void Robot::move_base_to(Vector3 pos)
@@ -110,7 +111,7 @@ void Robot::go_to_angles(Angles angles) const
 
 void Robot::update(float dt)
 {
-
+    conveyor->update(dt);
     if (program_running) {
         program.update(dt);
 
@@ -202,6 +203,22 @@ void Robot::teach_pause(float time)
     program.add_pause(time);
 }
 
+void Robot::attach_pallet(EuroPallet* pallet_)
+{
+    pallet = pallet_;
+
+    rest_pos = pick_pos + (pallet->corner_pos - pick_pos)*0.5f;
+    rest_pos.z = pick_pos.z + 100.0f;
+    program.set_rest_position(rest_pos);
+}
+
+void Robot::attach_conveyor(ConveyorBelt* conveyor_)
+{
+    conveyor = conveyor_;
+    pick_pos = conveyor->position.clone() + Vector3{0.0f, -100.0f, 196.0f};
+    program.generate_sequence(pick_pos, false);
+
+}
 
 void Robot::pick_up()
 {
@@ -209,10 +226,9 @@ void Robot::pick_up()
     item = conveyor->items.getTailValue();
     Vector3 drop_position = pallet->next_position(item);
     drop_position.z += item.size.z*0.5f;
-    program.replace_drop_sequence(drop_position);
+    program.generate_sequence(drop_position, true);
     update_item_position();
     conveyor->remove_item();
-
 }
 
 void Robot::drop()
@@ -220,6 +236,13 @@ void Robot::drop()
     is_holding = false;
     item.mesh->position = pallet->next_position(item);
     pallet->add_item(item);
+    *money += Box::value;
+    if (pallet->item_count == 32)
+    {
+        pallet->clear(scene);
+        *money += 32 * Box::value;
+    }
+
 }
 
 Program Robot::get_program()
@@ -251,11 +274,11 @@ void Robot::conveyor_logic()
 
     if (program_running)
     {
-        if (program.is_holding && !this->is_holding)
+        if (program.is_holding && !is_holding)
         {
             pick_up();
         }
-        else if (!program.is_holding && this->is_holding)
+        else if (!program.is_holding && is_holding)
         {
             drop();
         }
@@ -263,4 +286,16 @@ void Robot::conveyor_logic()
         if (is_holding)
             update_item_position();
     }
+}
+
+void Robot::upgrade_speed(float rate)
+{
+    if (*money > upgrade_cost)
+    {
+        *money -= upgrade_cost;
+        upgrade_cost *= rate*rate;
+        speed_multiplier *= rate;
+        program.set_r(1.0f / speed_multiplier);
+    }
+
 }

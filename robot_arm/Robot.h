@@ -32,8 +32,13 @@ namespace AR2 {
         std::unique_ptr<Joint> gripper;
 
         bool PID_active = true;
+        inline static float *money = nullptr;
+        std::shared_ptr<Scene> scene;
         ConveyorBelt* conveyor;
         EuroPallet* pallet;
+        Vector3 rest_pos{};
+        Vector3 pick_pos{};
+        Vector3 drop_pos{};
 
         bool is_holding = false;
         Item item;
@@ -66,6 +71,9 @@ namespace AR2 {
         void pick_up();
         void drop();
         void conveyor_logic();
+        void attach_conveyor(ConveyorBelt *conveyor_);
+        void attach_pallet(EuroPallet *pallet);
+        void upgrade_speed(float rate);
 
         [[nodiscard]] std::shared_ptr<Mesh> get_mesh() const { return j0->mesh; }
 
@@ -74,6 +82,9 @@ namespace AR2 {
     private:
         Color color1;
         Color color2;
+
+        float speed_multiplier = 1.0f;
+        float upgrade_cost = 5.0f;
 
         Vector3 base_pos;
         Vector3 target_pos{0, 0, 0};
@@ -84,6 +95,7 @@ namespace AR2 {
         bool program_running = false;
 
         void go_to_angles(Angles angles) const;
+
 
     };
 

@@ -43,7 +43,17 @@ struct EuroPallet {
         item_count++;
     }
 
-    [[nodiscard]] Vector3 next_position(const Item &item) const
+    void clear(std::shared_ptr<Scene> &scene)
+    {
+        while (item_count > 0)
+        {
+            scene->remove(items.getTailValue().mesh);
+            items.deleteTail();
+            item_count--;
+        }
+    }
+
+    [[nodiscard]] Vector3 next_position(const Item &item)
     {
         Vector3 offset = {item.size.x, item.size.y, item.size.z};
         offset.multiplyScalar(0.5f);
@@ -51,7 +61,6 @@ struct EuroPallet {
         int z_index = (int)(item_count / 8);
         int plane_index = (item_count) % 8;
 
-        std::cout << z_index <<" "<< plane_index << std::endl;
         offset.z += item.size.z * ((float)z_index);
 
         if (plane_index <= 3)
@@ -60,11 +69,6 @@ struct EuroPallet {
             offset.add({item.size.x  * ((float)(plane_index-4)), item.size.y, 0.0f});
 
         Vector3 position = corner_pos + offset;
-
-        if (position.z - corner_pos.z > 1400)
-        {
-            // clear...
-        }
 
         return position;
     }

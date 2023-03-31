@@ -10,10 +10,10 @@ void run(int *A, const int *B, const int *C, char** port) {
     renderer.setClearColor(Color::black);
 
     auto scene = Scene::create();
-    auto camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 50000);
-    camera->position.set(300,300, 500);
+    auto camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
+    camera->position.set(700,-1000, 500);
     camera->up.set(0,0,1);
-    camera->lookAt(300, 300, 0);
+    camera->lookAt(0,0,0);
 
     OrbitControls controls{camera, canvas};
     controls.enableKeys = false;
@@ -24,22 +24,6 @@ void run(int *A, const int *B, const int *C, char** port) {
     auto floor_mesh = Mesh::create(floor, floor_material);
     floor_mesh->position.setZ(-0.5f-200.0f);
     scene->add(floor_mesh);
-
-    renderer.render(scene, camera);
-
-    List<std::shared_ptr<AR2::Robot>> robots;
-    robots.insertAtTail(AR2::Robot::create());
-    robots.getHeadValue()->move_base_to({0.0f, 0.0f, -100.0f});
-    scene->add(robots.getHeadValue()->get_mesh());
-    robots.getHeadValue()->gripper->mesh->visible = false;
-
-    auto geo_base = CylinderGeometry::create(75, 100, 100, 50);
-    auto mat_base = MeshPhongMaterial::create();
-    mat_base->color = Color::aliceblue;
-    auto mesh_base = Mesh::create(geo_base, mat_base);
-    mesh_base->rotation.set(math::PI*0.5f, 0, 0);
-    mesh_base->position.set(0, 0, -100);
-    scene->add(mesh_base);
 
     {
         auto light = DirectionalLight::create(0xffffff, 0.4f);
@@ -56,12 +40,6 @@ void run(int *A, const int *B, const int *C, char** port) {
         auto light = AmbientLight::create(0xffffff, 0.6f);
         scene->add(light);
     }
-
-    canvas.onWindowResize([&](WindowSize size) {
-        camera->aspect = size.getAspect();
-        camera->updateProjectionMatrix();
-        renderer.setSize(size);
-    });
 
     UI ui(canvas);
 
@@ -95,26 +73,96 @@ void run(int *A, const int *B, const int *C, char** port) {
     canvas.addMouseListener(&l);
     Raycaster raycaster;
 
+    List<std::shared_ptr<AR2::Robot>> robots;
+
+    robots.insertAtTail(AR2::Robot::create());
+    robots.getTailValue()->move_base_to({0.0f, 0.0f, -100.0f});
+    scene->add(robots.getTailValue()->get_mesh());
+    robots.getTailValue()->gripper->mesh->visible = false;
+    robots.getTailValue()->scene = scene;
+
     ConveyorBelt conveyor_belt(100.0f);
-    conveyor_belt.rotate(90);
     conveyor_belt.set_position({300.0f, 0.0f, -100.0f});
     scene->add(conveyor_belt.conveyor);
     conveyor_belt.scene_ = scene;
-    robots.getHeadValue()->conveyor = &conveyor_belt;
+    robots.getTailValue()->attach_conveyor(&conveyor_belt);
 
     EuroPallet pallet;
-    pallet.set_position(0.0f, -350.0f, -200.0f);
+    pallet.set_position(0.0f, -400.0f, -200.0f);
     scene->add(pallet.mesh);
-    robots.getHeadValue()->pallet = &pallet;
+    robots.getTailValue()->attach_pallet(&pallet);
+
+    //////////////////
+
+    robots.insertAtTail(AR2::Robot::create());
+    robots.getTailValue()->move_base_to({1000.0f, 0.0f, -200.0f});
+    scene->add(robots.getTailValue()->get_mesh());
+    robots.getTailValue()->gripper->mesh->visible = false;
+    robots.getTailValue()->scene = scene;
+
+    ConveyorBelt conveyor_belt2(100.0f);
+    conveyor_belt2.set_position({700.0f, 0.0f, -100.0f});
+    scene->add(conveyor_belt2.conveyor);
+    conveyor_belt2.scene_ = scene;
+    robots.getTailValue()->attach_conveyor(&conveyor_belt2);
+
+    EuroPallet pallet2;
+    pallet2.set_position(1360.0f, -400.0f, -200.0f);
+    scene->add(pallet2.mesh);
+    robots.getTailValue()->attach_pallet(&pallet2);
+
+
+
+    float MONEY = 0.0f;
+    AR2::Robot::money = &MONEY;
+
+    renderer.enableTextRendering();
+    auto& textHandle = renderer.textHandle("Money");
+    textHandle.setPosition(0, canvas.getSize().height - 30);
+    textHandle.scale = 2;
+
+    auto& textHandle2 = renderer.textHandle();
+    textHandle2.setPosition(150, canvas.getSize().height - 30);
+    textHandle2.scale = 2;
+
+    canvas.onWindowResize([&](WindowSize size) {
+        camera->aspect = size.getAspect();
+        camera->updateProjectionMatrix();
+        renderer.setSize(size);
+        textHandle.setPosition(0, canvas.getSize().height - 30);
+        textHandle2.setPosition(150, canvas.getSize().height - 30);
+    });
 
     canvas.animate([&](float dt) {
         controls.enabled = !ui.mouseHovered;
-        conveyor_belt.update(dt);
 
-        robots.getHeadValue()->update(dt);
+        if (listener.current == listener.t_)
+        {
+            robots.getHeadValue()->upgrade_speed(1.1f);
+            listener.current = 0;
+        }
+        if (listener.current == listener.y_)
+        {
+            robots.getHeadValue()->conveyor->upgrade_speed(1.1f);
+            listener.current = 0;
+        }
+        if (listener.current == listener.u_)
+        {
+            robots.getHeadValue()->conveyor->upgrade_spawn_rate(1.1f);
+            listener.current = 0;
+        }
+
+        auto node = robots.getHead();
+
+        while (node != nullptr)
+        {
+            node->value->update(dt);
+            node = node->next;
+        }
 
         renderer.render(scene, camera);
         ui.render();
+        textHandle2.setText(std::to_string((int) MONEY));
         *port = ui.current_port;
     });
 }
@@ -134,4 +182,5 @@ void run(int *A, const int *B, const int *C, char** port) {
                 robots.getTailValue()->move_base_to(intersects.front().point);
                 scene->add(robots.getTailValue()->get_mesh());
             }
-        }*/
+        }
+*/

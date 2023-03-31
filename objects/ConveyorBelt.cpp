@@ -11,14 +11,16 @@ ConveyorBelt::ConveyorBelt(float leg_height, Vector3 pos)
     belt_mesh = mesh_from_stl("bin/data/models/conveyor_belt.stl", Color::orange);
 
     leg_mesh->position.setZ(-leg_height);
-    item_start_pos.z -= leg_height;
+    start_offset = {pos.x, -1000.0f, leg_height};
 
     conveyor = Group::create();
     conveyor->add(leg_mesh);
     conveyor->add(body_mesh);
     conveyor->add(belt_mesh);
 
+    rotate(90);
     conveyor->position = pos;
+    position = pos;
 }
 
 void ConveyorBelt::update(float dt)
@@ -68,7 +70,7 @@ void ConveyorBelt::add_item()
         return;
 
     Box box;
-    box.mesh->position = item_start_pos;
+    box.mesh->position = conveyor->position + start_offset;
     box.mesh->position.z += box.size.z*0.5f;
     items.insertAtHead(box);
     item_count++;

@@ -22,8 +22,8 @@ public:
     std::shared_ptr<Scene> scene_;
     List<Item> items;
 
-    int belt_direction = y;
-    Vector3 item_start_pos{300.0f, -1000.0f, 100.0f};
+    Vector3 position{};
+    Vector3 start_offset{};
     float spawn_rate = 0.1f; // s/spawn
     float speed = 2000.0f; // mm/s
     bool pause = false;
@@ -38,33 +38,18 @@ public:
         return conveyor->position.z + 100;
     }
 
-    void set_leg_color(Color color) const
+    void set_leg_color(Color color) const {change_mesh_color(leg_mesh, color);}
+    void set_body_color(Color color) const {change_mesh_color(body_mesh, color);}
+    void set_belt_color(Color color) const {change_mesh_color(belt_mesh, color);}
+    void set_position(Vector3 position_)
     {
-        change_mesh_color(leg_mesh, color);
+        conveyor->position = position_;
+        position = position_;
     }
-
-    void set_body_color(Color color) const
-    {
-        change_mesh_color(body_mesh, color);
-    }
-
-    void set_belt_color(Color color) const
-    {
-        change_mesh_color(belt_mesh, color);
-    }
-
-    void set_position(Vector3 position) const
-    {
-        conveyor->position = position;
-    }
-
-    void rotate(float degrees)
-    {
-        conveyor->rotateZ(math::degToRad(degrees));
-    }
-
+    void rotate(float degrees) const {conveyor->rotateZ(math::degToRad(degrees));}
     void add_item();
-
+    void upgrade_spawn_rate(float rate) {spawn_rate /= rate;}
+    void upgrade_speed(float rate) {speed *= rate;}
 
 private:
     float leg_height = 200.0f;

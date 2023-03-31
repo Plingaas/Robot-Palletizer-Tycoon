@@ -15,6 +15,7 @@
 #include "helpers/LinkedList.h"
 #include "objects/ConveyorBelt.h"
 #include "objects/EuroPallet.h"
+#include "Game.h"
 
 using namespace threepp;
 

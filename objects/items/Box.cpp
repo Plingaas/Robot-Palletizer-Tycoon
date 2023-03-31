@@ -13,5 +13,4 @@ Box::Box(Color color_)
     mat->color = color_;
 
     mesh = Mesh::create(geo, mat);
-
 }

@@ -28,6 +28,10 @@ struct Item {
     {
         return max_move - has_moved;
     }
+
+    virtual float get_value() const {return 0.0f;};
+
+    virtual ~Item() {};
 };
 
 
