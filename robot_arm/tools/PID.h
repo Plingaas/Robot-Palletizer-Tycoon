@@ -31,7 +31,7 @@ class PID {
 
 public:
 
-    PID() : PID(1, 0.01, 0.001) {}
+    PID() : PID(1.0f, 0.01f, 0.0f) {}
 
     PID(float kp, float ti, float td) : params_{kp, ti, td} {}
 
@@ -41,6 +41,7 @@ public:
         Vector3 curr_error = (setPoint - measuredValue);
 
         integral_ += (curr_error * dt);
+
         Vector3 diff = ((curr_error - prev_error_) / dt);
 
         // Windup guard for integral
@@ -58,7 +59,8 @@ public:
         Vector3 I = (integral_ * params_.ti);
         Vector3 D = (diff * params_.td);
 
-        Vector3 sum = P + I + D;
+        //Vector3 sum = P + I + D - error because D = infinity?
+        Vector3 sum = P + I ;
 
         for (int i = 0; i < 3; i++) {
             math::clamp(sum[i], -1.0f, 1.0f);

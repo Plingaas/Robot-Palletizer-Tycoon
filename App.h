@@ -12,7 +12,9 @@
 #include "UI.h"
 #include "Listener.h"
 #include "serial_communication/Serial.h"
-#include "LinkedList.h"
+#include "helpers/LinkedList.h"
+#include "objects/ConveyorBelt.h"
+#include "objects/EuroPallet.h"
 
 using namespace threepp;
 

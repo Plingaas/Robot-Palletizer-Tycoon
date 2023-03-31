@@ -7,40 +7,91 @@
 
 #include "threepp/threepp.hpp"
 #include <cstdio>
+#include "../../objects/items/Box.h"
 
 using namespace threepp;
 
 class Program {
 
 public:
+
+    float r = 0.02f;
     std::vector<Vector4> program
     {
-            {1000.0f, 200.0f, -200.0f, 1.0f},
-            {1000.0f, 200.0f, 200.0f, 2.1f},
-            {1000.0f, 800.0f, 200.0f, 1.7f},
-            {1000.0f, 800.0f, -200.0f, 1.5f}
-
+            {0.0f, -350.0f, 200.0f, 1.0f*r},
+            {300.0f, -100.0f, 146.0f, 1.0f*r},
+            {300.0f, -100.0f, 146.0f, 0.25f*r},
+            {300.0f, -100.0f, 96.0f, 0.5f*r},
+            {300.0f, -100.0f, 96.0f, 0.25f*r},
+            {300.0f, -100.0f, 146.0f, 1.0f*r},
+            {300.0f, -100.0f, 146.0f, 0.25f*r},
+            {0.0f, -350.0f, 200.0f, 1.0f*r},
+            {-360.0f, -420.0f, -47.8f, 1.0f*r},
+            {-360.0f, -420.0f, -47.8f, 0.25f*r},
+            {-360.0f, -420.0f, -97.8f, 0.5f*r},
+            {-360.0f, -420.0f, -97.8f, 0.25f*r},
+            {-360.0f, -420.0f, -47.8f, 1.0f*r},
+            {-360.0f, -420.0f, -47.8f, 0.25f*r}
     };
 
-    // lerp value from 0 to 1;
-    float t = 0.0f;
+    float t = 0.0f; // lerp variable 0 -> 1
     Vector3 position{0, 0, 0};
-    int index = 0;
-    int commands = program.size();
+    unsigned int index = 0;
+    unsigned int commands = program.size();
+    bool repeat = false;
+    bool run = false;
+    bool pause = false;
+
+    void replace_drop_sequence(Vector3 drop_position)
+    {
+        std::vector<Vector4> sequence{};
+
+        drop_position.z += 50.0f;
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,1.0f*r});
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,0.25f*r});
+        drop_position.z -= 50.0f;
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,0.5f*r});
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,0.25f*r});
+        drop_position.z += 50.0f;
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,1.0f*r});
+        sequence.emplace_back(Vector4{drop_position.x,drop_position.y, drop_position.z,0.25f*r});
+
+        for (int i = 8; i < program.size(); i++)
+        {
+            program[i] = sequence[i-8];
+        }
+    }
+
+    unsigned int pick_index = 4;
+    unsigned int drop_index = 11;
+    bool is_holding = false;
 
     void remove_all() {
         program = std::vector<Vector4>{};
     }
 
     void update(float dt) {
-        if (!commands)
+        if (!commands || !run || pause)
             return;
 
-        t += dt/get_current().w;
+        t += dt/get_next().w;
         if (t > 1.0f) {
             t -= 1.0f;
-            if (index == commands-1) index = 0;
-            else index++;
+            if (index == commands-1)
+            {
+
+                index = 0;
+                if (!repeat)
+                    run = false;
+            }
+            else
+            {
+                index++;
+                if (index == pick_index)
+                    is_holding = true;
+                if (index == drop_index)
+                    is_holding = false;
+            }
         }
 
         Vector4 current = get_current();
@@ -48,19 +99,28 @@ public:
 
         // Linear interoplation between points;
         position = extract_position(current) + (extract_position(next) - extract_position(current))*t;
+    }
 
+    void set_program(const std::vector<Vector4> &program_)
+    {
+        program = program_;
+        commands = program.size();
     }
 
     Vector4 get_current() {
         return program.at(index);
     }
-    // Gets next command
+
+
     Vector4 get_next() {
-        if (index == program.size()-1) return program.at(0);
+        if (index == commands-1) return program.front();
         else return program.at(index + 1);
     }
 
     void add_pause(float time) {
+        if (program.empty())
+            return;
+
         Vector4 command = program.back();
         command[3] = time;
         add(command);

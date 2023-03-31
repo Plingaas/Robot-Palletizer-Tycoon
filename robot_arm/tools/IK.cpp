@@ -173,8 +173,7 @@ namespace AR2 {
         return R0_3;
     };
 
-    Matrix3 getR3_6(float theta1, float theta2, float theta3) {
-        Matrix3 R_target = P6_0;
+    Matrix3 getR3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target) {
         Matrix3 R0_3 = getR0_3(theta1, theta2, theta3);
         return R0_3.transpose().premultiply(R_target);
     };
@@ -192,25 +191,23 @@ namespace AR2 {
 
 
     // Solves the inverse kinematics for a given position (x, y, z).
-    Angles IK(Vector3 pos) {
+    Angles IK(const Vector3 &pos, const Matrix3 &R_target) {
 
-        Matrix3 R_target = P6_0;
-        Vector3 j3_offset = Vector3{0.0f, 0.0f, a5 + a6}.applyMatrix3(R_target);
+        Vector3 j3_offset = Vector3{0.0f, 0.0f, -(a5 + a6)}.applyMatrix3(R_target);
         Vector3 j3_pos = pos - j3_offset;
 
-        return IK0_3(j3_pos);
+        return IK0_3(j3_pos, R_target);
     };
 
-    Angles IK(float x, float y, float z) {
-        Vector3 position{x, y, z};
-        return IK(position);
+    Angles IK(float x, float y, float z, const Matrix3 &R_target) {
+        return IK({x, y, z}, R_target);
     };
 
-    Angles IK0_3(Vector3 pos) {
-        float theta1 = atan2(pos.y, pos.x);
-        float z1_3 = pos.z - a1;
-        float rx = pos.x - a2 * cos(theta1);
-        float ry = pos.y - a2 * sin(theta1);
+    Angles IK0_3(const Vector3 &position, const Matrix3 &R_target) {
+        float theta1 = atan2(position.y, position.x);
+        float z1_3 = position.z - a1;
+        float rx = position.x - a2 * cos(theta1);
+        float ry = position.y - a2 * sin(theta1);
         float r = sqrt(rx * rx + ry * ry);
         float phi2 = atan2(z1_3, r);
         float r1 = sqrt(r * r + z1_3 * z1_3);
@@ -223,11 +220,11 @@ namespace AR2 {
         float phi3 = acos(num);
         float theta3 = phi3 - PI;
 
-        return IK3_6(theta1, theta2, theta3);
+        return IK3_6(theta1, theta2, theta3, R_target);
     }
 
-    Angles IK3_6(float theta1, float theta2, float theta3) {
-        Matrix3 R3_6 = getR3_6(theta1, theta2, theta3);
+    Angles IK3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target) {
+        Matrix3 R3_6 = getR3_6(theta1, theta2, theta3, R_target);
 
         float r13 = R3_6.elements[2];
         float r23 = R3_6.elements[5];

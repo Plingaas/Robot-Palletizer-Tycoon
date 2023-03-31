@@ -5,7 +5,6 @@
 #ifndef ROBOTCONTROLLER_LINKEDLIST_HPP
 #define ROBOTCONTROLLER_LINKEDLIST_HPP
 
-
 #include <iostream>
 
 /*-------------------------List Item-------------------------*/
@@ -302,7 +301,7 @@ public:
     // Added by Peter Lingås on 29.03.2023
     T getHeadValue()
     {
-        return tail->value;
+        return head->value;
     }
 
     ListItem<T> *searchForL(T item)

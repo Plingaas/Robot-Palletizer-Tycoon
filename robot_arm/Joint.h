@@ -4,22 +4,19 @@
 
 #ifndef THREEPP_VCPKG_TEST_JOINT_H
 #define THREEPP_VCPKG_TEST_JOINT_H
-#include "threepp/threepp.hpp"
-using namespace threepp;
+#include "../helpers/Helper.h"
 
 namespace AR2 {
 
-    static STLLoader loader;
-    static std::shared_ptr<BufferGeometry> j0_geo = loader.load("bin/data/models/j0_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j1_geo = loader.load("bin/data/models/j1_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j2_geo = loader.load("bin/data/models/j2_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j3_geo = loader.load("bin/data/models/j3_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j4_geo = loader.load("bin/data/models/j4_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j5_geo = loader.load("bin/data/models/j5_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j6_geo = loader.load("bin/data/models/j6_simplified.stl");
-    static std::shared_ptr<BufferGeometry> gripper_geo = loader.load("bin/data/models/servo_gripper_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j0_geo = load_stl("bin/data/models/j0_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j1_geo = load_stl("bin/data/models/j1_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j2_geo = load_stl("bin/data/models/j2_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j3_geo = load_stl("bin/data/models/j3_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j4_geo = load_stl("bin/data/models/j4_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j5_geo = load_stl("bin/data/models/j5_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j6_geo = load_stl("bin/data/models/j6_simplified.stl");
+    static std::shared_ptr<BufferGeometry> gripper_geo = load_stl("bin/data/models/servo_gripper_simplified.stl");
 
-    enum Axis {x, y, z};
     class Joint {
 
     private:

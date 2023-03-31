@@ -28,16 +28,12 @@ void run(int *A, const int *B, const int *C, char** port) {
     renderer.render(scene, camera);
 
     List<std::shared_ptr<AR2::Robot>> robots;
-
     robots.insertAtTail(AR2::Robot::create());
+    robots.getHeadValue()->move_base_to({0.0f, 0.0f, -100.0f});
     scene->add(robots.getHeadValue()->get_mesh());
+    robots.getHeadValue()->gripper->mesh->visible = false;
 
-    robots.insertAtTail(AR2::Robot::create());
-    robots.getTailValue()->move_base_to({500, 500, -200});
-    scene->add(robots.getTailValue()->get_mesh());
-
-
-    auto geo_base = CylinderGeometry::create(75, 100, 200, 50);
+    auto geo_base = CylinderGeometry::create(75, 100, 100, 50);
     auto mat_base = MeshPhongMaterial::create();
     mat_base->color = Color::aliceblue;
     auto mesh_base = Mesh::create(geo_base, mat_base);
@@ -76,7 +72,6 @@ void run(int *A, const int *B, const int *C, char** port) {
     target_mesh->position.set(0, 0, 0);
     scene->add(target_mesh);
 
-
     // Key Listener
     float t = 0;
     Listener listener{t};
@@ -100,11 +95,35 @@ void run(int *A, const int *B, const int *C, char** port) {
     canvas.addMouseListener(&l);
     Raycaster raycaster;
 
-    canvas.animate([&](float dt) {
-        // Serial data position
-        robots.getHead()->value->go_to_steps(*A, *B, *C);
+    ConveyorBelt conveyor_belt(100.0f);
+    conveyor_belt.rotate(90);
+    conveyor_belt.set_position({300.0f, 0.0f, -100.0f});
+    scene->add(conveyor_belt.conveyor);
+    conveyor_belt.scene_ = scene;
+    robots.getHeadValue()->conveyor = &conveyor_belt;
 
-        // Create robot when conditions met
+    EuroPallet pallet;
+    pallet.set_position(0.0f, -350.0f, -200.0f);
+    scene->add(pallet.mesh);
+    robots.getHeadValue()->pallet = &pallet;
+
+    canvas.animate([&](float dt) {
+        controls.enabled = !ui.mouseHovered;
+        conveyor_belt.update(dt);
+
+        robots.getHeadValue()->update(dt);
+
+        renderer.render(scene, camera);
+        ui.render();
+        *port = ui.current_port;
+    });
+}
+
+// Serial data position
+//robots.getHead()->value->go_to_steps(*A, *B, *C);
+
+// Spawns a robot at mouse position in 3d space by pressing n then left clicking
+/*
         bool createRobot = listener.current == listener.n_ && mlistener.LEFTCLICK;
         if (createRobot) {
             raycaster.setFromCamera(mouse, camera);
@@ -115,22 +134,4 @@ void run(int *A, const int *B, const int *C, char** port) {
                 robots.getTailValue()->move_base_to(intersects.front().point);
                 scene->add(robots.getTailValue()->get_mesh());
             }
-        }
-
-        controls.enabled = !ui.mouseHovered;
-
-        target_mesh->position = ui.pos;
-        if (ui.move_btn_clicked)
-        {
-            robots.getTail()->value->set_target(ui.pos);
-            ui.move_btn_clicked = false;
-        }
-        robots.getTail()->value->update(dt);
-
-
-        renderer.render(scene, camera);
-
-        ui.render();
-        *port = ui.current_port;
-    });
-}
+        }*/

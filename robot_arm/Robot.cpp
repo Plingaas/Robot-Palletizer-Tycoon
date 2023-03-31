@@ -60,8 +60,8 @@ AR2::Robot::Robot() {
     j1->mesh->add(j2->mesh);
     j0->mesh->add(j1->mesh);
 
-    PID_controller.params().set_params(0.02f, 0.0f, 0.0f);
-    PID_controller.setWindupGuard(0.005f);
+    PID_controller.params().set_params(0.2f, 0.0005f, 0.0f);
+    PID_controller.setWindupGuard(0.003f);
 }
 
 void Robot::move_base_to(Vector3 pos)
@@ -78,7 +78,7 @@ void Robot::go_to(float x, float y, float z)
 void Robot::go_to(Vector3 pos)
 {
     Vector3 relative_pos = pos - base_pos;
-    Angles angles = IK(relative_pos);
+    Angles angles = IK(relative_pos, DOWN_LONG_X);
 
     go_to_angles(angles);
     current_pos = pos;
@@ -113,23 +113,32 @@ void Robot::update(float dt)
 
     if (program_running) {
         program.update(dt);
+
+        if (!program.run)
+            abort_program();
+
         if (PID_active)
         {
-            Vector3 new_pos = PID_controller.regulate(program.position, current_pos, dt);
-            move(new_pos);
+            Vector3 regulation = PID_controller.regulate(program.position, current_pos, dt);
+            move(regulation);
         } else {
             go_to(program.position);
         }
     }
-    else
+
+    conveyor_logic();
+
+    // Not sure if this will be used
+    /*else
     {
         if (PID_active)
         {
             Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
             move(new_pos);
         }
-    }
+    }*/
 }
+
 
 void Robot::move(float x, float y, float z)
 {
@@ -157,7 +166,101 @@ void Robot::set_colors(Color _color1, Color _color2)
     color2 = _color2;
 }
 
-void Robot::run_program(bool state)
+void Robot::run_program()
 {
-    program_running = state;
+    program_running = true;
+    program.run = true;
+    program.pause = false;
+}
+
+void Robot::abort_program()
+{
+    program_running = false;
+    program.run = false;
+    program.pause = false;
+}
+
+void Robot::pause_program()
+{
+    program_running = true;
+    program.run = true;
+    program.pause = true;
+}
+
+bool Robot::is_running()
+{
+    return program_running;
+}
+
+void Robot::teach_position(Vector4 command)
+{
+    program.add(command);
+}
+
+void Robot::teach_pause(float time)
+{
+    program.add_pause(time);
+}
+
+
+void Robot::pick_up()
+{
+    is_holding = true;
+    item = conveyor->items.getTailValue();
+    Vector3 drop_position = pallet->next_position(item);
+    drop_position.z += item.size.z*0.5f;
+    program.replace_drop_sequence(drop_position);
+    update_item_position();
+    conveyor->remove_item();
+
+}
+
+void Robot::drop()
+{
+    is_holding = false;
+    item.mesh->position = pallet->next_position(item);
+    pallet->add_item(item);
+}
+
+Program Robot::get_program()
+{
+    return program;
+}
+
+Vector3 Robot::get_pos()
+{
+    return current_pos;
+}
+
+void Robot::update_item_position()
+{
+
+    Vector3 new_pos = current_pos;
+    new_pos.z -= item.size.z*0.5f;
+
+    item.mesh->position = new_pos;
+}
+
+void Robot::conveyor_logic()
+{
+    if (conveyor->pause && !program_running)
+    {
+        run_program();
+
+    }
+
+    if (program_running)
+    {
+        if (program.is_holding && !this->is_holding)
+        {
+            pick_up();
+        }
+        else if (!program.is_holding && this->is_holding)
+        {
+            drop();
+        }
+
+        if (is_holding)
+            update_item_position();
+    }
 }

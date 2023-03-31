@@ -15,7 +15,8 @@ namespace AR2 {
     const float a3 = 305.0f;
     const float a4 = 222.63f;
     const float a5 = 36.25f;
-    const float a6 = 52.0f; // End effector full length is 64
+    //const float a6 = 52.0f; // End effector full length is 64
+    const float a6 = 0.0f; // temporary use
     const float a7 = 32.66f; // End effector pinch offset;
 
     // LINK MAX ROTATION LIMITS
@@ -105,6 +106,12 @@ namespace AR2 {
                     1, 0, 0
             };
 
+    static const Matrix3 DOWN_LONG_X
+            {
+                0, 1, 0,
+                -1, 0, 0,
+                0, 0, 1
+            };
     struct Angles {
         float theta1;
         float theta2;
@@ -127,13 +134,13 @@ namespace AR2 {
         }
     };
 
-    Angles IK(float x, float y, float z);
+    Angles IK(float x, float y, float z, const Matrix3 &R_target = P6_0);
 
-    Angles IK(Vector3 position);
+    Angles IK(const Vector3 &position, const Matrix3 &R_target = P6_0);
 
-    Angles IK0_3(Vector3 pos);
+    Angles IK0_3(const Vector3 &position, const Matrix3 &R_target = P6_0);
 
-    Angles IK3_6(float theta1, float theta2, float theta3);
+    Angles IK3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target = P6_0);
 
     bool within_work_area(Angles);
 
