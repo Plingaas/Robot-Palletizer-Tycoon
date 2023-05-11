@@ -46,7 +46,7 @@ public:
         // Windup guard for integral
         if (windup_guard_) {
             for (int i = 0; i < 3; i++) {
-                math::clamp(integral_[i], -windup_guard_.value(), windup_guard_.value());
+                integral_[i] = std::clamp(integral_[i], -windup_guard_.value(), windup_guard_.value());
             }
         }
 
@@ -60,10 +60,6 @@ public:
 
         //Vector3 sum = P + I + D - error because D = infinity?
         Vector3 sum = P + I;
-
-        for (int i = 0; i < 3; i++) {
-            math::clamp(sum[i], -1.0f, 1.0f);
-        }
 
         return sum;
     }

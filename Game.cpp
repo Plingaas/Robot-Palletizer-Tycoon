@@ -128,11 +128,11 @@ void Game::run(const int *A, const int *B, const int *C, char **port) {
     });
 
     canvas.animate([&](float dt) {
+        controls.enabled = !upgradeUI.mouseHovered;
 
         auto node = robots.getHead();
 
-
-        checkListenerActions(&keyListener, &mouseListener);
+        checkListenerActions(&keyListener, &mouseListener, MONEY);
 
 
         while (node != nullptr) {
@@ -146,7 +146,6 @@ void Game::run(const int *A, const int *B, const int *C, char **port) {
         textHandle.setText("Money " + std::to_string((int) MONEY));
         upgradeUI.render();
 
-        controls.enabled = !upgradeUI.mouseHovered;
         /*
         ui.render();
         UI ui(canvas);
@@ -199,7 +198,7 @@ std::shared_ptr<EuroPallet> Game::createPallet() {
     }
 }
 
-void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener) {
+void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener, double &money) {
 
     switch (keyListener->current) {
         case keyListener->t_: {
@@ -221,21 +220,24 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
     }
 
     if (keyListener->current == keyListener->b_ && mouseListener->LEFTCLICK) {
-        if (robots.length() == 0 || robots.getTailValue()->conveyor && robots.getTailValue()->pallet) {
+        if (robots.length() == 0 || robots.getTailValue()->conveyor && robots.getTailValue()->pallet && money >= 100) {
             addRobot();
+            money -= 100.0f;
             keyListener->current = 0;
         }
     }
 
     if (keyListener->current == keyListener->n_ && mouseListener->LEFTCLICK) {
-        if (robots.length() > 0 && !robots.getTailValue()->conveyor) {
+        if (robots.length() > 0 && !robots.getTailValue()->conveyor && money >= 50) {
             robots.getTailValue()->attachConveyor(createConveyor());
+            money -= 50.0f;
             keyListener->current = 0;
         }
     }
-    if (keyListener->current == keyListener->m_ && mouseListener->LEFTCLICK) {
+    if (keyListener->current == keyListener->m_ && mouseListener->LEFTCLICK && money >= 25) {
         if (robots.length() > 0 && !robots.getTailValue()->pallet) {
             robots.getTailValue()->attachPallet(createPallet());
+            money -= 25.0f;
             keyListener->current = 0;
         }
 

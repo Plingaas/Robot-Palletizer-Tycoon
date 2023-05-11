@@ -43,7 +43,7 @@ public:
     std::shared_ptr<ConveyorBelt> createConveyor();
     std::shared_ptr<EuroPallet> createPallet();
 
-    void checkListenerActions(KListener* keyListener, MListener* mouseListener);
+    void checkListenerActions(KListener* keyListener, MListener* mouseListener, double &money);
 
 };
 
