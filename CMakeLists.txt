@@ -10,5 +10,5 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 file(COPY "${CMAKE_SOURCE_DIR}/resources/models" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data)
-add_executable(test ${SOURCES} main.cpp Game.hpp Game.cpp src/listener/Listener.cpp)
+add_executable(test ${SOURCES} main.cpp Game.hpp Game.cpp)
 target_link_libraries(test PRIVATE threepp::threepp imgui::imgui)
