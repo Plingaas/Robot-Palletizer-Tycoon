@@ -18,6 +18,7 @@ namespace AR2 {
     const float a3 = 305.0f;
     const float a4 = 222.63f;
     const float a5 = 36.25f;
+
     //const float a6 = 52.0f; // End effector full length is 64
     const float a6 = 0.0f; // temporary use
     const float a7 = 32.66f; // End effector pinch offset;
@@ -119,6 +120,12 @@ namespace AR2 {
                     0, 0, 1
             };
 
+    /**
+     * @brief Represents the angles for the robot's joints.
+     *
+     * This struct holds all the joint angles, and allows for
+     * multiplication using operator overload.
+     */
     struct Angles {
         float theta1;
         float theta2;
@@ -141,17 +148,62 @@ namespace AR2 {
         }
     };
 
-    // Calculates the IK for the robot
+    /**
+     * @brief Calculates the inverse kinematics.
+     *
+     * Calculates the IK from base frame 0 to end effector
+     * frame 6.
+     *
+     * @param x Target x position.
+     * @param y Target y position.
+     * @param z Target z position.
+     * @param R_target Target orientation.
+     * @return Returns the angles for all the joints.
+     */
     Angles IK(float x, float y, float z, const Matrix3 &R_target = P6_0);
 
+    /**
+     * @brief Calculates the inverse kinematics.
+     *
+     * Calculates the IK from base frame 0 to end effector
+     * frame 6.
+     *
+     * @param position Target position
+     * @param R_target Target orientation.
+     * @return Returns the angles for all the joints.
+     */
     Angles IK(const Vector3 &position, const Matrix3 &R_target = P6_0);
 
-    // Calculates the IK for frame 0 to 3 (POSITIONING)
+    /**
+     * @brief Calculates the inverse kinematics for positioning
+     *
+     * Calculates the IK from base frame 0 to frame 3. This
+     * takes care of the positoning of the end effector.
+     *
+     * @param position The target end effector position.
+     * @param R_target The target end effector orientation
+     * @return Returns the angles for all the joints.
+     */
     Angles IK0_3(const Vector3 &position, const Matrix3 &R_target = P6_0);
 
-    // Calculates the IK for frame 3 to 6 (ORIENTATION)
-    Angles IK3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target = P6_0);
+    /**
+     * @brief Calculates the inverse kinematics for orientation
+     *
+     * Calculates the IK from base frame 3 to frame 6. This
+     * takes care of the orientation of the end effector.
+     *
+     * @param angles The angles of joint 1, 2 and 3.
+     * @param R_target The target end effector orientation
+     * @return Returns the angles for all the joints.
+     */
+    Angles IK3_6(const Vector3 &angles, const Matrix3 &R_target = P6_0);
 
+    /**
+     * @brief Checks if the angles are within the robots workspace.
+     *
+     * @param Angles The joint angles.
+     * @return Returns true if within workspace, false if not.
+     */
     bool withinWorkArea(Angles);
 
 }

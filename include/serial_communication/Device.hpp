@@ -8,10 +8,16 @@
 #include <array>
 #include "Serial.hpp"
 
+/**
+ * @brief A struct for storing the serial data.
+ */
 struct Data {
     std::array<int, 3> steps{};
 };
 
+/**
+ * @brief A class for a COM device.
+ */
 class Device {
 
 private:
@@ -22,16 +28,46 @@ public:
 
     Data serial_data;
 
+    /**
+     * @brief The Device's constructor.
+     */
     Device();
 
+    /**
+     * @brief Sets the COM port.
+     *
+     * @param _port The COM port to connect to.
+     */
     void setPort(const char *_port);
 
+    /**
+     * @brief Connects to the stored port.
+     *
+     * @return Returns a bool for whether the connection was successful or not.
+     */
     bool connect();
 
+    /**
+     * @brief Reads from the serial port.
+     *
+     * @return Returns a std::string containing the serial data.
+     */
     std::string read();
 
+    /**
+     * @brief Writes to the serial port.
+     *
+     * @param _data The data to write.
+     *
+     * @return void.
+     */
     void write(char _data[]);
 
+    /**
+     * @brief Checks if the Device is connected.
+     *
+     * @return Returns a boolean for whether the device is connected or not.
+     */
     bool isConnected();
 
 };

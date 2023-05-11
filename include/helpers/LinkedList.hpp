@@ -1,6 +1,8 @@
 //
 // Created by peter on 3/28/2023.
 // CODE FROM https://github.com/OSSpk/Doubly-and-Singly-Linked-List/blob/master/Doubly%20Linked%20List%20(with%20HEAD%20and%20TAIL).cpp
+// This code has been copied because it serves the purpose of creating a new useful datatype,
+// a linked list, which is trivial. I.E. don't reinvent the wheel.
 
 #ifndef ROBOTCONTROLLER_LINKEDLIST_HPP
 #define ROBOTCONTROLLER_LINKEDLIST_HPP

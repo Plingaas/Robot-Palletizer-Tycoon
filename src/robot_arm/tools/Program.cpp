@@ -24,17 +24,17 @@ void Program::generateSequence(Vector3 pos, bool drop, float z_offset) {
 }
 
 void Program::update(float dt) {
-    if (!commands || !run || pause)
+    if (!commands || !running)
         return;
 
-    t += dt / getNext().w;
-    if (t > 1.0f) {
-        t -= 1.0f;
+    lerp += dt / getNext().w;
+    if (lerp > 1.0f) {
+        lerp -= 1.0f;
         if (index == commands - 1) {
 
             index = 0;
             if (!repeat)
-                run = false;
+                running = false;
         } else {
             index++;
             if (index == pick_index)
@@ -48,7 +48,7 @@ void Program::update(float dt) {
     Vector4 next = getNext();
 
     // Linear interoplation between points;
-    position = extractPosition(current) + (extractPosition(next) - extractPosition(current)) * t;
+    position = extractPosition(current) + (extractPosition(next) - extractPosition(current)) * lerp;
 }
 
 void Program::setProgram(const std::vector<Vector4> &program_) {
@@ -77,7 +77,7 @@ void Program::add(Vector4 command, int n) {
 void Program::remove(int n) {
     program.erase(program.begin() + n);
     index = 0;
-    t = 0;
+    lerp = 0;
     commands--;
 }
 

@@ -56,8 +56,7 @@ Serial::~Serial() {
     }
 }
 
-// Reading bytes from serial port to buffer;
-// returns read bytes count, or if error occurs, returns 0
+
 int Serial::readSerialPort(const char *buffer, unsigned int buf_size) {
     DWORD bytesRead{};
     unsigned int toRead = 0;
@@ -82,8 +81,6 @@ int Serial::readSerialPort(const char *buffer, unsigned int buf_size) {
     return 0;
 }
 
-// Sending provided buffer to serial port;
-// returns true if succeed, false if not
 bool Serial::writeSerialPort(const char *buffer, unsigned int buf_size) {
     DWORD bytesSend;
 

@@ -11,19 +11,21 @@ int main() {
     int B = 0;
     int C = 0;
 
+    std::array<int, 3> serialData{};
+
     char* port = nullptr;
     Device device;
 
     // Main application
-    auto window = [&A, &B, &C, &port]()
+    auto window = [&serialData, &port]()
     {
         Game game;
-        game.run(&A, &B, &C, &port);
+        game.run(&serialData, &port);
     };
 
     std::thread app_thread(window);
 
-    auto serial_comm = [&A, &B, &C, &port, &device]()
+    auto serial_comm = [&serialData, &port, &device]()
     {
 
         while (port == nullptr)
@@ -45,9 +47,9 @@ int main() {
             int C_index = data.find('C');
             int end = data.find('<');
 
-            A = std::stoi(data.substr(A_index + 1, B_index - A_index - 1));
-            B = std::stoi(data.substr(B_index + 1, C_index - B_index - 1));
-            C = std::stoi(data.substr(C_index + 1, end - C_index - 1));
+            serialData[0] = std::stoi(data.substr(A_index + 1, B_index - A_index - 1));
+            serialData[1] = std::stoi(data.substr(B_index + 1, C_index - B_index - 1));
+            serialData[2] = std::stoi(data.substr(C_index + 1, end - C_index - 1));
 
         }
         

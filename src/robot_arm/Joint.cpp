@@ -19,11 +19,11 @@ void Joint::setRotationAxis(Axis axis) {
     rotation_axis = axis;
 };
 
-void Joint::setRotation(Vector3 rot) {
+void Joint::setRotation(Vector3 rot) const {
     mesh->rotation.set(rot.x, rot.y, rot.z);
 };
 
-void Joint::setPosition(Vector3 pos) {
+void Joint::setPosition(Vector3 pos) const {
     mesh->position.set(pos.x, pos.y, pos.z);
 
 };

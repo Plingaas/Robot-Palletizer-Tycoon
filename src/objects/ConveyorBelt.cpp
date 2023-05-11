@@ -23,7 +23,7 @@ ConveyorBelt::ConveyorBelt(float leg_height, Vector3 pos) {
 
 void ConveyorBelt::update(float dt) {
 
-    if (!pause) {
+    if (!running) {
         time_since_last_spawn += dt;
         if (time_since_last_spawn >= spawn_rate) {
             addItem();
@@ -35,7 +35,7 @@ void ConveyorBelt::update(float dt) {
         for (int i = 0; i < item_count; i++) {
             if (node->value.toMove() < distance) {
                 node->value.move(distance, y);
-                pause = true;
+                running = true;
             } else {
                 node->value.move(distance, y);
             }
@@ -50,12 +50,12 @@ void ConveyorBelt::removeItem() {
     if (item_count > 0) {
         items.deleteTail();
         item_count--;
-        pause = false;
+        running = false;
     }
 }
 
 void ConveyorBelt::addItem() {
-    if (pause)
+    if (running)
         return;
 
     Box box;

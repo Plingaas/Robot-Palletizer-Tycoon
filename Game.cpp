@@ -14,6 +14,11 @@ struct UpgradeUI : imgui_context {
     bool upgradeSpawnRate = false;
     bool upgradePalletReward = false;
 
+    float* robotSpeedUpgradeCost;
+    float* upgradeBeltSpeedCost;
+    float* upgradeSpawnRateCost;
+    float* upgradePalletRewardCost;
+
     Vector3 pos;
 
     explicit UpgradeUI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
@@ -45,7 +50,7 @@ struct UpgradeUI : imgui_context {
     }
 };
 
-void Game::run(const int *A, const int *B, const int *C, char **port) {
+void Game::run(const std::array<int, 3> *serialData, char **port) {
 
     Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
     GLRenderer renderer(canvas);
@@ -128,6 +133,7 @@ void Game::run(const int *A, const int *B, const int *C, char **port) {
     });
 
     canvas.animate([&](float dt) {
+        controls.enabled = !upgradeUI.mouseHovered;
 
         auto node = robots.getHead();
 
@@ -146,7 +152,11 @@ void Game::run(const int *A, const int *B, const int *C, char **port) {
         textHandle.setText("Money " + std::to_string((int) MONEY));
         upgradeUI.render();
 
-        controls.enabled = !upgradeUI.mouseHovered;
+        if (upgradeUI.upgradePalletReward) robots.getTailValue()->pallet->upgradeDeliverValue(1.1);
+        if (upgradeUI.upgradeSpawnRate) robots.getTailValue()->conveyor->upgradeSpawnRate(1.1);
+        if (upgradeUI.upgradeBeltSpeed) robots.getTailValue()->conveyor->upgradeSpeed(1.1);
+        if (upgradeUI.upgradeRobotSpeed) robots.getTailValue()->upgradeSpeed(1.1);
+
         /*
         ui.render();
         UI ui(canvas);
@@ -203,19 +213,19 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
 
     switch (keyListener->current) {
         case keyListener->t_: {
-            robots.getHeadValue()->upgradeSpeed(1.25f);
+            robots.getHeadValue()->upgradeSpeed(1.1f);
             keyListener->current = 0;
         }
-        case keyListener->y_ : {
-            robots.getHeadValue()->conveyor->upgradeSpeed(1.25f);
+        case keyListener->y_: {
+            robots.getHeadValue()->conveyor->upgradeSpeed(1.1f);
             keyListener->current = 0;
         }
         case keyListener->u_: {
-            robots.getHeadValue()->conveyor->upgradeSpawnRate(1.25f);
+            robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1f);
             keyListener->current = 0;
         }
         case keyListener->i_ : {
-            robots.getHeadValue()->pallet->upgradeDeliverValue(1.25f);
+            robots.getHeadValue()->pallet->upgradeDeliverValue(1.1f);
             keyListener->current = 0;
         }
     }

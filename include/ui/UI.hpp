@@ -14,6 +14,14 @@ using namespace threepp;
 struct UI : imgui_context {
 
 public:
+
+    /**
+     * @brief Constructor for the UI.
+     *
+     * @param canvas The canvas the UI will exist on.
+     *
+     * @return void.
+     */
     explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
 
     Vector3 pos;
@@ -21,8 +29,16 @@ public:
 
     bool mouseHovered = false;
 
+    /**
+     * @brief The update loop.
+     *
+     * This is where the UI is constructed and events are looked for.
+     *
+     * @return void.
+     */
     void onRender();
 
+    // Contains al the ports available for serial connection.
     std::vector<std::string> ports = {};
     char *current_port = nullptr;
 };

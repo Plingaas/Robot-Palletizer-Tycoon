@@ -88,7 +88,7 @@ void Robot::goToSteps(float j1_steps, float j2_steps, float j3_steps) {
     float j2_angle = j2_steps * TO_RADIANS / J2_STEPS_PER_DEG;
     float j3_angle = j3_steps * TO_RADIANS / J3_STEPS_PER_DEG;
 
-    Angles angles = IK3_6(j1_angle, j2_angle, j3_angle);
+    Angles angles = IK3_6(Vector3{j1_angle, j2_angle, j3_angle});
 
     goToAngles(angles);
 }
@@ -109,13 +109,10 @@ void Robot::update(float dt) {
         return;
 
     conveyor->update(dt);
-    runConveyorLogic();
+    runLogic();
 
-    if (program_running) {
+    if (program.running) {
         program.update(dt);
-
-        if (!program.run)
-            abortProgram();
 
         if (PID_active) {
             Vector3 regulation = PID_controller.regulate(program.position, current_pos, dt);
@@ -123,6 +120,8 @@ void Robot::update(float dt) {
         } else {
             goTo(program.position);
         }
+    } else {
+        runProgram(false);
     }
 
 
@@ -154,31 +153,23 @@ void Robot::setPIDParameters(float kp, float ti, float td) {
     PID_controller.params().set_params(kp, ti, td);
 }
 
-void Robot::setColors(Color _color1, Color _color2) {
-    color1 = _color1;
-    color2 = _color2;
+void Robot::setColors(Color color1, Color color2) {
+    changeMeshColor(j0->mesh, color1);
+    changeMeshColor(j1->mesh, color2);
+    changeMeshColor(j2->mesh, color1);
+    changeMeshColor(j3->mesh, color2);
+    changeMeshColor(j4->mesh, color1);
+    changeMeshColor(j5->mesh, color2);
+    changeMeshColor(j6->mesh, color1);
+    changeMeshColor(gripper->mesh, color2);
 }
 
-void Robot::runProgram() {
-    program_running = true;
-    program.run = true;
-    program.pause = false;
-}
-
-void Robot::abortProgram() {
-    program_running = false;
-    program.run = false;
-    program.pause = false;
-}
-
-void Robot::pauseProgram() {
-    program_running = true;
-    program.run = true;
-    program.pause = true;
+void Robot::runProgram(bool run) {
+    program.running = run;
 }
 
 bool Robot::isRunning() {
-    return program_running;
+    return program.running;
 }
 
 void Robot::teachPosition(Vector4 command) {
@@ -189,7 +180,7 @@ void Robot::teachPause(float time) {
     program.addPause(time);
 }
 
-void Robot::attachPallet(std::shared_ptr<EuroPallet> pallet_) {
+void Robot::attachPallet(const std::shared_ptr<EuroPallet> &pallet_) {
     pallet = pallet_;
 
     rest_pos = pick_pos + (pallet->corner_pos - pick_pos) * 0.5f;
@@ -197,7 +188,7 @@ void Robot::attachPallet(std::shared_ptr<EuroPallet> pallet_) {
     program.setRestPosition(rest_pos);
 }
 
-void Robot::attachConveyor(std::shared_ptr<ConveyorBelt> conveyor_) {
+void Robot::attachConveyor(const std::shared_ptr<ConveyorBelt> &conveyor_) {
     conveyor = conveyor_;
     pick_pos = conveyor->position.clone() + Vector3{0.0f, -100.0f, 196.0f};
     program.generateSequence(pick_pos, false);
@@ -248,13 +239,11 @@ void Robot::updateItemPosition() {
     item.mesh->position = new_pos;
 }
 
-void Robot::runConveyorLogic() {
-    if (conveyor->pause && !program_running) {
-        runProgram();
+void Robot::runLogic() {
+    if (conveyor->running && !program.running)
+        runProgram(true);
 
-    }
-
-    if (program_running) {
+    if (program.running) {
         if (program.is_holding && !is_holding) {
             pickUp();
         } else if (!program.is_holding && is_holding) {

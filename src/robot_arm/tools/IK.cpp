@@ -166,11 +166,11 @@ namespace AR2 {
                 };
     };
 
-    Matrix3 getR0_3(float theta1, float theta2, float theta3) {
+    Matrix3 getR0_3(Vector3 angles) {
         // Find HTM for frame 0 to 3
-        Matrix4 H0_1 = DH_HTM(1, theta1);
-        Matrix4 H1_2 = DH_HTM(2, theta2);
-        Matrix4 H2_3 = DH_HTM(3, theta3);
+        Matrix4 H0_1 = DH_HTM(1, angles.x);
+        Matrix4 H1_2 = DH_HTM(2, angles.y);
+        Matrix4 H2_3 = DH_HTM(3, angles.z);
 
         Matrix4 H0_3 = H0_1.premultiply(H1_2).premultiply(H2_3);
 
@@ -185,8 +185,8 @@ namespace AR2 {
         return R0_3;
     };
 
-    Matrix3 getR3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target) {
-        Matrix3 R0_3 = getR0_3(theta1, theta2, theta3);
+    Matrix3 getR3_6(Vector3 angles, const Matrix3 &R_target) {
+        Matrix3 R0_3 = getR0_3(angles);
         return R0_3.transpose().premultiply(R_target);
     };
 
@@ -232,11 +232,11 @@ namespace AR2 {
         float phi3 = acos(num);
         float theta3 = phi3 - PI;
 
-        return IK3_6(theta1, theta2, theta3, R_target);
+        return IK3_6(Vector3{theta1, theta2, theta3}, R_target);
     }
 
-    Angles IK3_6(float theta1, float theta2, float theta3, const Matrix3 &R_target) {
-        Matrix3 R3_6 = getR3_6(theta1, theta2, theta3, R_target);
+    Angles IK3_6(const Vector3 &angles, const Matrix3 &R_target) {
+        Matrix3 R3_6 = getR3_6(angles, R_target);
 
         float r13 = R3_6.elements[2];
         float r23 = R3_6.elements[5];
@@ -248,6 +248,6 @@ namespace AR2 {
         float theta5 = acos(r33);
         float theta6 = atan2(-r32, r31);
 
-        return {theta1, theta2, theta3, theta4, theta5, theta6};
+        return {angles.x, angles.y, angles.z, theta4, theta5, theta6};
     }
 }
