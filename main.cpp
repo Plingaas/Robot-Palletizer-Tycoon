@@ -1,6 +1,6 @@
 
-#include "App.h"
-#include "serial_communication/Device.h"
+#include "Game.hpp"
+#include "serial_communication/Device.hpp"
 #include <thread>
 #include <iostream>
 
@@ -17,7 +17,8 @@ int main() {
     // Main application
     auto window = [&A, &B, &C, &port]()
     {
-        run(&A, &B, &C, &port);
+        Game game;
+        game.run(&A, &B, &C, &port);
     };
 
     std::thread app_thread(window);
@@ -27,7 +28,8 @@ int main() {
 
         while (port == nullptr)
         {
-            std::cout << "";
+            // Sleep to free the CPU
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
         device.setPort(port);
