@@ -34,7 +34,7 @@ This project also includes a standalone visualization tool for Chris Annin Robot
 
 ### Requirements
 
-- Windows 10 for robot control (optional)
+- Windows for robot control (optional)
 - Serial USB connection for robot control (optional)
 
 

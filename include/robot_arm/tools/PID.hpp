@@ -62,7 +62,6 @@ public:
         //Vector3 sum = P + I + D - error because D = infinity?
         Vector3 sum = P + I;
 
-
         return sum;
     }
 
