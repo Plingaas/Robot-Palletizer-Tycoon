@@ -1,13 +1,10 @@
-//
-// Created by peter on 3/30/2023.
-//
 #include "objects/ConveyorBelt.hpp"
 
 
 ConveyorBelt::ConveyorBelt(float leg_height, Vector3 pos) {
-    legMesh = meshFromSTL("bin/data/models/conveyor_legs.stl", Color::whitesmoke, {1.0f, 1.0f, leg_height});
-    bodyMesh = meshFromSTL("bin/data/models/conveyor_main.stl", Color::whitesmoke);
-    beltMesh = meshFromSTL("bin/data/models/conveyor_belt.stl", Color::orange);
+    legMesh = meshFromSTL(legSTLPath, Color::whitesmoke, {1.0f, 1.0f, leg_height});
+    bodyMesh = meshFromSTL(bodySTLPath, Color::whitesmoke);
+    beltMesh = meshFromSTL(beltSTLPath, Color::orange);
 
     legMesh->position.setZ(-leg_height);
 

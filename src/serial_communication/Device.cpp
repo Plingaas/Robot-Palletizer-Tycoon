@@ -1,8 +1,4 @@
-//
-// Created by peter on 2/20/2023.
-//
-
-/* HOW TO USE
+/* HOW TO USE IN MAIN CODE
     std::vector<std::string> ports = Serial::availablePorts();
     const char* port = ports[0].c_str();
 

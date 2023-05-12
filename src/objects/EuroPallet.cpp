@@ -1,7 +1,3 @@
-//
-// Created by peter on 3/30/2023.
-//
-
 #include "objects/EuroPallet.hpp"
 
 Vector3 EuroPallet::nextPosition(const Item &item) {

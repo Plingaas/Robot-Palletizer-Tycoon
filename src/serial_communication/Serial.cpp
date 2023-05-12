@@ -112,7 +112,7 @@ std::vector<std::string> Serial::availablePorts() {
 
     for (int i = 1; i <= 255; i++) {
 
-        std::string portName = "\\\\.\\COM" + std::to_string(i);
+        std::string portName = R"(\\.\COM)" + std::to_string(i);
         const char *port = portName.c_str();
 
         HANDLE handle = CreateFileA(static_cast<LPCSTR>(port),

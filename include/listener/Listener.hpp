@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/26/2023.
-//
-
 #ifndef ROBOTCONTROLLER_LISTENER_HPP
 #define ROBOTCONTROLLER_LISTENER_HPP
 
@@ -72,8 +68,8 @@ namespace {
         explicit MListener(float &t) : t(t) {}
 
         void onMouseDown(int button, const Vector2 &pos) override {
-            if (button == 0) LEFTCLICK = true;
-            if (button == 1) RIGHTCLICK = true;
+            if (button == 0) LEFTCLICK = true; // I have read this https://stackoverflow.com/questions/2125066/is-it-a-bad-practice-to-use-an-if-statement-without-curly-braces
+            if (button == 1) RIGHTCLICK = true; // But i like how this looks, and I don't see myself adding more code to this.
         }
 
         void onMouseUp(int button, const Vector2 &pos) override {

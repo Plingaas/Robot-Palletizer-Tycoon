@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/21/2023.
-//
-
 #ifndef THREEPP_VCPKG_TEST_IK_H
 #define THREEPP_VCPKG_TEST_IK_H
 
@@ -10,7 +6,6 @@
 using namespace threepp;
 
 namespace AR2 {
-
 
     // LINK LENGTHS
     const float a1 = 169.77f;

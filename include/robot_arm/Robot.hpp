@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #ifndef THREEPP_VCPKG_TEST_ROBOT_H
 #define THREEPP_VCPKG_TEST_ROBOT_H
 
@@ -15,8 +11,8 @@
 
 using namespace threepp;
 
+// AR2 is the robot arms name
 namespace AR2 {
-
 
     /**
      * @brief Represents a robot with joints.
@@ -78,6 +74,15 @@ namespace AR2 {
          * @return void.
          */
         void update(float dt);
+
+        /**
+         * @brief Moves the robot with PID.
+         *
+         * @param dt The time the last frame took.
+         *
+         * @return void.
+         */
+        void moveWithPID(float dt);
 
         /**
          * @brief Moves the base of the robot to a new position.
@@ -321,6 +326,7 @@ namespace AR2 {
          * @return void.
          */
         void goToAngles(Angles angles) const;
+
 
     };
 

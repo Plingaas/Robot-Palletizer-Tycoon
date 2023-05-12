@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #include "robot_arm/Joint.hpp"
 
 using namespace AR2;

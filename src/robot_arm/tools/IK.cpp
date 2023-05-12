@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/21/2023.
-//
-
 #include <iostream>
 #include "robot_arm/tools/IK.hpp"
 

@@ -1,7 +1,3 @@
-//
-// Created by peter on 3/29/2023.
-//
-
 #include "robot_arm/tools/Program.hpp"
 
 void Program::generateSequence(Vector3 pos, bool drop, float z_offset) {

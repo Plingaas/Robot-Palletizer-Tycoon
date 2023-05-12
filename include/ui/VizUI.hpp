@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #ifndef THREEPP_VCPKG_TEST_UI_H
 #define THREEPP_VCPKG_TEST_UI_H
 
@@ -11,18 +7,18 @@
 
 using namespace threepp;
 
-struct UI : imgui_context {
+struct VizUI : imgui_context {
 
 public:
 
     /**
-     * @brief Constructor for the UI.
+     * @brief Constructor for the VizUI.
      *
-     * @param canvas The canvas the UI will exist on.
+     * @param canvas The canvas the VizUI will exist on.
      *
      * @return void.
      */
-    explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
+    explicit VizUI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
 
     Vector3 pos;
     bool moveButtonClicked;
@@ -32,7 +28,7 @@ public:
     /**
      * @brief The update loop.
      *
-     * This is where the UI is constructed and events are looked for.
+     * This is where the VizUI is constructed and events are looked for.
      *
      * @return void.
      */

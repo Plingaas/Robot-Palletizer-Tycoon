@@ -1,7 +1,3 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #include "robot_arm/Robot.hpp"
 
 #include "threepp/threepp.hpp"
@@ -94,7 +90,10 @@ void Robot::goToSteps(const std::array<int, 3> &steps) {
 
     goToAngles(angles);
 }
-
+void Robot::moveWithPID(float dt) {
+    Vector3 new_pos = PIDController.regulate(targetPos, currentPos, dt);
+    move(new_pos);
+}
 void Robot::goToAngles(Angles angles) const {
     if (AR2::withinWorkArea(angles)) {
         j1->goTo(angles.theta1);
@@ -125,17 +124,6 @@ void Robot::update(float dt) {
     } else {
         runProgram(false);
     }
-
-
-    // Not sure if this will be used
-    /*else
-    {
-        if (PID_active)
-        {
-            Vector3 new_pos = PID_controller.regulate(target_pos, current_pos, dt);
-            move(new_pos);
-        }
-    }*/
 }
 
 

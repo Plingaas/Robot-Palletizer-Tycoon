@@ -1,7 +1,3 @@
-//
-// Created by peter on 3/29/2023.
-//
-
 #ifndef ROBOTCONTROLLER_PROGRAM_HPP
 #define ROBOTCONTROLLER_PROGRAM_HPP
 

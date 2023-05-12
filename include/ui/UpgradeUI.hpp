@@ -1,7 +1,3 @@
-//
-// Created by peter on 5/11/2023.
-//
-
 #ifndef ROBOTCONTROLLER_UPGRADEUI_HPP
 #define ROBOTCONTROLLER_UPGRADEUI_HPP
 

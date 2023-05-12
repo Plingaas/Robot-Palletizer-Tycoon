@@ -1,7 +1,3 @@
-//
-// Created by peter on 3/30/2023.
-//
-
 #ifndef ROBOTCONTROLLER_EUROPALLET_HPP
 #define ROBOTCONTROLLER_EUROPALLET_HPP
 
@@ -29,9 +25,9 @@ public:
      * Also sets the color to rosybrown
      *
      */
-    EuroPallet() {
+    explicit EuroPallet(Vector3 pos = {0.0f, 0.0f, 0.0f}) {
         mesh = meshFromSTL("bin/data/models/euro_pallet.stl", Color::rosybrown);
-
+        setPosition(pos);
     };
 
     /**

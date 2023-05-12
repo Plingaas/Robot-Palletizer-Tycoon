@@ -1,12 +1,9 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #ifndef THREEPP_VCPKG_TEST_JOINT_H
 #define THREEPP_VCPKG_TEST_JOINT_H
 
 #include "helpers/Helper.hpp"
 
+// AR2 is the robot arms name
 namespace AR2 {
 
     // Geometries of all the different parts of the robot.

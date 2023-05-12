@@ -1,5 +1,5 @@
-
 #include "Game.hpp"
+#include "Visualization.hpp"
 #include "serial_communication/Device.hpp"
 #include <thread>
 #include <iostream>
@@ -14,20 +14,26 @@ int main() {
     // Main application
     auto window = [&serialData, &port]()
     {
-        Game game;
 
         bool mode = false;
         std::cout << "Enter 0 to play the game.\nEnter 1 to open the visualization tool.\n";
         std::cin >> mode;
 
-        if (mode)
-            game.runVisualization(&serialData, &port);
-        else
+        if (mode) {
+            Visualization viz;
+            viz.runVisualization(serialData, &port);
+        } else {
+            Game game;
             game.runGame();
+        }
+
+        exit(0);
+
     };
 
     std::thread app_thread(window);
 
+//#ifdef WIN32
     auto serial_comm = [&serialData, &port, &device]()
     {
 
@@ -58,7 +64,9 @@ int main() {
 
     std::thread serial_thread(serial_comm);
 
-    app_thread.join();
     serial_thread.join();
+//#endif // WIN32
+    app_thread.join();
+
 
 }

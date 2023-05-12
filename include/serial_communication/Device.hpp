@@ -1,15 +1,14 @@
-//
-// Created by peter on 2/20/2023.
-//
-
 #ifndef THREEPP_VCPKG_TEST_DEVICE_H
 #define THREEPP_VCPKG_TEST_DEVICE_H
 
+#ifdef WIN32
 #include <array>
 #include "Serial.hpp"
 
 /**
  * @brief A class for a COM device.
+ *
+ * Made for easy use.
  */
 class Device {
 
@@ -68,5 +67,5 @@ public:
     bool isConnected();
 
 };
-
+#endif // WIN32
 #endif //THREEPP_VCPKG_TEST_DEVICE_H

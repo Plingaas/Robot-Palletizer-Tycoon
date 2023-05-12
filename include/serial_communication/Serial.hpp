@@ -7,7 +7,7 @@
 // availablePorts() written by Peter
 //
 #pragma once
-
+#ifdef WIN32
 #define ARDUINO_WAIT_TIME 2000
 #define MAX_DATA_LENGTH 255
 
@@ -81,3 +81,4 @@ public:
      */
     ~Serial();
 };
+#endif // WIN32

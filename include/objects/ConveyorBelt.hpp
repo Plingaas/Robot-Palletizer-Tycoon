@@ -1,7 +1,3 @@
-//
-// Created by peter on 3/30/2023.
-//
-
 #ifndef ROBOTCONTROLLER_CONVEYORBELT_HPP
 #define ROBOTCONTROLLER_CONVEYORBELT_HPP
 
@@ -16,6 +12,11 @@
 class ConveyorBelt {
 
 public:
+
+    // Paths to STL files
+    inline static std::string legSTLPath = "bin/data/models/conveyor_legs.stl";
+    inline static std::string bodySTLPath = "bin/data/models/conveyor_main.stl";
+    inline static std::string beltSTLPath = "bin/data/models/conveyor_belt.stl";
 
     // Meshes
     std::shared_ptr<Group> conveyor;

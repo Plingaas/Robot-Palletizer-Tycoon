@@ -1,6 +1,4 @@
-//
-// Created by peter on 3/6/2023.
-//
+
 // Code from https://github.com/markaren/threepp/blob/master/examples/libs/utility/PID.hpp
 // This has been used in order to save time as PID control is a very trivial
 // concept. Slightly modified.
@@ -10,7 +8,6 @@
 
 #include <limits>
 #include <optional>
-
 #include "threepp/threepp.hpp"
 
 using namespace threepp;
@@ -36,7 +33,9 @@ public:
     PID(float kp, float ti, float td) : params_{kp, ti, td} {}
 
     Vector3 regulate(Vector3 setPoint, Vector3 measuredValue, float dt) {
-        if (dt == 0) dt = std::numeric_limits<float>::min();
+        // Need parantheses around std::...min because it causes error when windows.h is included
+        // as min is defined somewhere in the windows.h
+        if (dt == 0) dt = (std::numeric_limits<float>::min)();
 
         Vector3 currentError = (setPoint - measuredValue);
 

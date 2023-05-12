@@ -4,16 +4,11 @@
 
 #ifndef THREEPP_VCPKG_TEST_APP_H
 #define THREEPP_VCPKG_TEST_APP_H
-
-#include "threepp/extras/imgui/imgui_context.hpp"
-
 #include "threepp/threepp.hpp"
 #include "threepp/core/Raycaster.hpp"
 #include "robot_arm/Robot.hpp"
-#include "UI/UI.hpp"
 #include "ui/UpgradeUI.hpp"
 #include "listener/Listener.hpp"
-#include "serial_communication/Serial.hpp"
 #include "helpers/LinkedList.hpp"
 #include "objects/ConveyorBelt.hpp"
 #include "objects/EuroPallet.hpp"
@@ -32,6 +27,7 @@ private:
 
     std::shared_ptr<PerspectiveCamera> camera;
     std::shared_ptr<Scene> scene;
+    std::unique_ptr<UpgradeUI> ui;
 
     // For listeners
     float t1 = 0;
@@ -40,6 +36,7 @@ private:
     Raycaster raycaster;
     Vector2 mouse;
 
+protected:
 
 public:
 
@@ -60,20 +57,6 @@ public:
     void setupScene();
 
     void setupListeners(Canvas *canvas);
-
-    /**
-     * @brief Starts the visualization tool
-     *
-     * This is the function that starts the visualization tool.
-     * Once this function is called the tool is ran until
-     * the window is closed.
-     *
-     * @param serialData The serial data from the real robot..
-     * @param port The port to connect to.
-     *
-     * @return void.
-     */
-    void runVisualization(const std::array<int, 3> *serialData, char **port);
 
     /**
      * @brief Starts the game.
@@ -128,6 +111,8 @@ public:
      * @return void.
      */
     void checkListenerActions(KListener* keyListener, MListener* mouseListener);
+
+    void checkUpgrades();
 
 };
 

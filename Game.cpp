@@ -35,41 +35,6 @@ void Game::setupScene() {
     raycaster = Raycaster{};
 }
 
-void Game::runVisualization(const std::array<int, 3> *serialData, char **port) {
-
-    Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
-    GLRenderer renderer(canvas);
-    renderer.setClearColor(Color::aliceblue);
-
-    camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
-    OrbitControls controls{camera, canvas};
-    controls.enableKeys = false;
-
-    setupScene();
-
-    addRobot();
-    addRobot({200.0f, 200.0f, 0.0f});
-
-    UI ui(canvas);
-
-    canvas.onWindowResize([&](WindowSize size) {
-        camera->aspect = size.getAspect();
-        camera->updateProjectionMatrix();
-        renderer.setSize(size);
-    });
-
-    canvas.animate([&](float dt) {
-
-        renderer.render(scene, camera);
-        ui.render();
-
-        controls.enabled = !ui.mouseHovered;
-        *port = ui.currentPort;
-
-        robots.getHeadValue()->goToSteps(*serialData);
-    });
-}
-
 void Game::runGame() {
 
     Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
@@ -81,8 +46,6 @@ void Game::runGame() {
     controls.enableKeys = false;
 
     setupScene();
-
-    // Setting up listeners
 
     // ------------------------ Code from threepp examples
     // Key Listener
@@ -115,7 +78,7 @@ void Game::runGame() {
     textHandle.setPosition(0, canvas.getSize().height - 30);
     textHandle.scale = 2;
 
-    UpgradeUI upgradeUI(canvas);
+    ui = std::make_unique<UpgradeUI>(canvas);
 
     canvas.onWindowResize([&](WindowSize size) {
         camera->aspect = size.getAspect();
@@ -125,27 +88,22 @@ void Game::runGame() {
     });
 
     canvas.animate([&](float dt) {
-        controls.enabled = !upgradeUI.mouseHovered;
-
-        auto node = robots.getHead();
 
         checkListenerActions(&keyListener, &mouseListener);
+        checkUpgrades();
 
+        // Update all robots
+        auto node = robots.getHead();
         while (node != nullptr) {
             node->value->update(dt);
             node = node->next;
         }
 
         renderer.render(scene, camera);
-
         textHandle.setText("Money " + std::to_string((int) MONEY));
-        upgradeUI.render();
-        controls.enabled = !upgradeUI.mouseHovered;
 
-        if (upgradeUI.upgradePalletReward) robots.getTailValue()->pallet->upgradeDeliverValue(1.1);
-        if (upgradeUI.upgradeSpawnRate) robots.getTailValue()->conveyor->upgradeSpawnRate(1.1);
-        if (upgradeUI.upgradeBeltSpeed) robots.getTailValue()->conveyor->upgradeSpeed(1.1);
-        if (upgradeUI.upgradeRobotSpeed) robots.getTailValue()->upgradeSpeed(1.1);
+        ui->render();
+        controls.enabled = !ui->mouseHovered;
 
     });
 }
@@ -188,25 +146,6 @@ std::shared_ptr<EuroPallet> Game::createPallet() {
 
 void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener) {
 
-    switch (keyListener->current) {
-        case keyListener->t_: {
-            robots.getHeadValue()->upgradeSpeed(1.1f);
-            keyListener->current = 0;
-        }
-        case keyListener->y_: {
-            robots.getHeadValue()->conveyor->upgradeSpeed(1.1f);
-            keyListener->current = 0;
-        }
-        case keyListener->u_: {
-            robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1f);
-            keyListener->current = 0;
-        }
-        case keyListener->i_ : {
-            robots.getHeadValue()->pallet->upgradeDeliverValue(1.1f);
-            keyListener->current = 0;
-        }
-    }
-
     if (keyListener->current == keyListener->b_ && mouseListener->LEFTCLICK) {
         if (robots.length() == 0 || robots.getTailValue()->conveyor && robots.getTailValue()->pallet) {
 
@@ -232,5 +171,26 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
             keyListener->current = 0;
         }
 
+    }
+}
+
+void Game::checkUpgrades() {
+    if (robots.length() == 0 || robots.getHeadValue()->pallet == nullptr || robots.getHeadValue()->conveyor == nullptr)
+        return;
+    if (ui->upgradePalletReward) {
+        robots.getHeadValue()->pallet->upgradeDeliverValue(1.1);
+        ui->upgradePalletReward = false;
+    }
+    if (ui->upgradeSpawnRate) {
+        robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1);
+        ui->upgradeSpawnRate = false;
+    }
+    if (ui->upgradeBeltSpeed) {
+        robots.getHeadValue()->conveyor->upgradeSpeed(1.1);
+        ui->upgradeBeltSpeed = false;
+    }
+    if (ui->upgradeRobotSpeed) {
+        robots.getHeadValue()->upgradeSpeed(1.1);
+        ui->upgradeRobotSpeed = false;
     }
 }

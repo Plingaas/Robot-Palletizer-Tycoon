@@ -1,12 +1,8 @@
-//
-// Created by peter on 2/20/2023.
-//
-
-#include "UI/UI.hpp"
+#include "ui/VizUI.hpp"
 
 using namespace threepp;
 
-void UI::onRender() {
+void VizUI::onRender() {
     ImGui::Begin("Settings");
 
     ImGui::Text("X");
