@@ -24,5 +24,5 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 file(COPY "${CMAKE_SOURCE_DIR}/resources/models" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data)
-add_executable(game ${SOURCES} main.cpp Game.hpp Game.cpp)
+add_executable(game ${SOURCES} main.cpp Game.hpp Game.cpp Visualization.cpp Visualization.hpp)
 target_link_libraries(game PRIVATE threepp::threepp imgui::imgui)
