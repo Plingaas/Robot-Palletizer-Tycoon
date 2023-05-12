@@ -25,7 +25,7 @@ public:
     explicit UI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
 
     Vector3 pos;
-    bool move_btn_clicked;
+    bool moveButtonClicked;
 
     bool mouseHovered = false;
 
@@ -40,7 +40,7 @@ public:
 
     // Contains al the ports available for serial connection.
     std::vector<std::string> ports = {};
-    char *current_port = nullptr;
+    char *currentPort = nullptr;
 };
 
 #endif //THREEPP_VCPKG_TEST_UI_H

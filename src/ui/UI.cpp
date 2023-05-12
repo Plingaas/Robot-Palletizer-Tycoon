@@ -18,7 +18,7 @@ void UI::onRender() {
     ImGui::DragFloat("##y", &pos.y);
     ImGui::SameLine();
     if (ImGui::Button("Move")) {
-        move_btn_clicked = true;
+        moveButtonClicked = true;
     }
 
     ImGui::Text("Z");
@@ -37,14 +37,14 @@ void UI::onRender() {
     ImGui::SameLine();
 
     // Code inspiration from https://github.com/ocornut/imgui/issues/1658
-    if (ImGui::BeginCombo("##combo", current_port)) {
+    if (ImGui::BeginCombo("##combo", currentPort)) {
         ports = Serial::availablePorts();
         for (const std::string &_port: ports) {
             char *port = const_cast<char *>(_port.c_str());
-            bool is_selected = (current_port == port);
+            bool is_selected = (currentPort == port);
 
             if (ImGui::Selectable(port, is_selected))
-                current_port = port;
+                currentPort = port;
 
             if (is_selected)
                 ImGui::SetItemDefaultFocus();

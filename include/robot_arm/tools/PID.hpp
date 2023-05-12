@@ -38,24 +38,24 @@ public:
     Vector3 regulate(Vector3 setPoint, Vector3 measuredValue, float dt) {
         if (dt == 0) dt = std::numeric_limits<float>::min();
 
-        Vector3 curr_error = (setPoint - measuredValue);
+        Vector3 currentError = (setPoint - measuredValue);
 
-        integral_ += (curr_error * dt);
+        integral_ += (currentError * dt);
 
-        Vector3 diff = ((curr_error - prev_error_) / dt);
+        Vector3 diff = ((currentError - prevError_) / dt);
 
         // Windup guard for integral
-        if (windup_guard_) {
+        if (windupGuard_) {
             for (int i = 0; i < 3; i++) {
-                integral_[i] = std::clamp(integral_[i], -windup_guard_.value(), windup_guard_.value());
+                integral_[i] = std::clamp(integral_[i], -windupGuard_.value(), windupGuard_.value());
             }
         }
 
         // Save current error as previous error for next iteration
-        prev_error_ = curr_error;
+        prevError_ = currentError;
 
         // Scale
-        Vector3 P = (curr_error * params_.kp);
+        Vector3 P = (currentError * params_.kp);
         Vector3 I = (integral_ * params_.ti);
         Vector3 D = (diff * params_.td);
 
@@ -66,11 +66,11 @@ public:
     }
 
     void setWindupGuard(const std::optional<float> &windupGuard) {
-        windup_guard_ = windupGuard;
+        windupGuard_ = windupGuard;
     }
 
     [[nodiscard]] Vector3 error() const {
-        return prev_error_;
+        return prevError_;
     }
 
     [[nodiscard]] PIDParameters &params() {
@@ -84,9 +84,9 @@ public:
 private:
 
     Vector3 integral_{};
-    Vector3 prev_error_{};
+    Vector3 prevError_{};
     PIDParameters params_;
-    std::optional<float> windup_guard_;
+    std::optional<float> windupGuard_;
 };
 
 #endif //ROBOTCONTROLLER_PID_HPP

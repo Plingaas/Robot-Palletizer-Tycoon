@@ -25,8 +25,8 @@ namespace AR2 {
     class Joint {
 
     private:
-        Axis rotation_axis = z;
-        bool reverse_rotation = false;
+        Axis rotationAxis = z;
+        bool reverseRotation = false;
 
     public:
 

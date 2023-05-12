@@ -6,11 +6,6 @@
 
 int main() {
 
-    // Variables for storing serial data.
-    int A = 0;
-    int B = 0;
-    int C = 0;
-
     std::array<int, 3> serialData{};
 
     char* port = nullptr;
@@ -20,7 +15,15 @@ int main() {
     auto window = [&serialData, &port]()
     {
         Game game;
-        game.run(&serialData, &port);
+
+        bool mode = false;
+        std::cout << "Enter 0 to play the game.\nEnter 1 to open the visualization tool.\n";
+        std::cin >> mode;
+
+        if (mode)
+            game.runVisualization(&serialData, &port);
+        else
+            game.runGame();
     };
 
     std::thread app_thread(window);
@@ -42,21 +45,20 @@ int main() {
             // Obtain data from string
             std::string data = device.read();
 
-            int A_index = data.find('A');
-            int B_index = data.find('B');
-            int C_index = data.find('C');
+            int A_index = data.find('A') + 1;
+            int B_index = data.find('B') + 1;
+            int C_index = data.find('C') + 1;
             int end = data.find('<');
 
-            serialData[0] = std::stoi(data.substr(A_index + 1, B_index - A_index - 1));
-            serialData[1] = std::stoi(data.substr(B_index + 1, C_index - B_index - 1));
-            serialData[2] = std::stoi(data.substr(C_index + 1, end - C_index - 1));
-
+            serialData[0] = std::stoi(data.substr(A_index, B_index - A_index));
+            serialData[1] = std::stoi(data.substr(B_index, C_index - B_index));
+            serialData[2] = std::stoi(data.substr(C_index, end - C_index));
         }
-        
     };
 
     std::thread serial_thread(serial_comm);
 
     app_thread.join();
     serial_thread.join();
+
 }

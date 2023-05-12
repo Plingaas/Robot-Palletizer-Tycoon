@@ -54,6 +54,10 @@ void Device::setPort(const char *_port) {
     this->port = _port;
 };
 
+const char* Device::getPort() {
+    return port;
+}
+
 std::string Device::read() {
     std::string data;
 

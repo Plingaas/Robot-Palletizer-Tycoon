@@ -9,13 +9,6 @@
 #include "Serial.hpp"
 
 /**
- * @brief A struct for storing the serial data.
- */
-struct Data {
-    std::array<int, 3> steps{};
-};
-
-/**
  * @brief A class for a COM device.
  */
 class Device {
@@ -25,8 +18,6 @@ private:
     std::unique_ptr<Serial> device;
 
 public:
-
-    Data serial_data;
 
     /**
      * @brief The Device's constructor.
@@ -40,6 +31,12 @@ public:
      */
     void setPort(const char *_port);
 
+    /**
+     * @brief Gets the port..
+     *
+     * @return Returns the port as a const char*
+     */
+    const char* getPort();
     /**
      * @brief Connects to the stored port.
      *

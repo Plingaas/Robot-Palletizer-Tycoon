@@ -1,3 +1,4 @@
+# Kandidatnr: 10005
 # Robot Palletizer Tycoon & Chris Annin Robot Arm Visualization
 
 This repository houses two distinct yet interconnected components:
@@ -33,7 +34,7 @@ This project also includes a standalone visualization tool for Chris Annin Robot
 ## Getting Started
 
 ### Requirements
-
+- Real robot must be run using https://github.com/Plingaas/RobotArm.
 - Windows for robot control (optional)
 - Serial USB connection for robot control (optional)
 

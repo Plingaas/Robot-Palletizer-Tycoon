@@ -60,13 +60,15 @@ AR2::Robot::Robot() {
     j1->mesh->add(j2->mesh);
     j0->mesh->add(j1->mesh);
 
-    PID_controller.params().set_params(0.2f, 0.0005f, 0.0f);
-    PID_controller.setWindupGuard(0.003f);
+    changeMeshColor(j6->mesh, Color::white);
+
+    PIDController.params().set_params(0.2f, 0.0005f, 0.0f);
+    PIDController.setWindupGuard(0.003f);
 
 }
 
 void Robot::moveBaseTo(Vector3 pos) {
-    base_pos = pos;
+    basePos = pos;
     j0->mesh->position = pos;
 }
 
@@ -76,17 +78,17 @@ void Robot::goTo(float x, float y, float z) {
 
 
 void Robot::goTo(Vector3 pos) {
-    Vector3 relative_pos = pos - base_pos;
+    Vector3 relative_pos = pos - basePos;
     Angles angles = IK(relative_pos, DOWN_LONG_X);
 
     goToAngles(angles);
-    current_pos = pos;
+    currentPos = pos;
 }
 
-void Robot::goToSteps(float j1_steps, float j2_steps, float j3_steps) {
-    float j1_angle = j1_steps * TO_RADIANS / J1_STEPS_PER_DEG;
-    float j2_angle = j2_steps * TO_RADIANS / J2_STEPS_PER_DEG;
-    float j3_angle = j3_steps * TO_RADIANS / J3_STEPS_PER_DEG;
+void Robot::goToSteps(const std::array<int, 3> &steps) {
+    float j1_angle = steps[0] * TO_RADIANS / J1_STEPS_PER_DEG;
+    float j2_angle = steps[1] * TO_RADIANS / J2_STEPS_PER_DEG;
+    float j3_angle = steps[2] * TO_RADIANS / J3_STEPS_PER_DEG;
 
     Angles angles = IK3_6(Vector3{j1_angle, j2_angle, j3_angle});
 
@@ -114,8 +116,8 @@ void Robot::update(float dt) {
     if (program.running) {
         program.update(dt);
 
-        if (PID_active) {
-            Vector3 regulation = PID_controller.regulate(program.position, current_pos, dt);
+        if (PIDActive) {
+            Vector3 regulation = PIDController.regulate(program.position, currentPos, dt);
             move(regulation);
         } else {
             goTo(program.position);
@@ -142,15 +144,15 @@ void Robot::move(float x, float y, float z) {
 }
 
 void Robot::move(Vector3 rel) {
-    goTo(current_pos + rel);
+    goTo(currentPos + rel);
 }
 
 void Robot::setTarget(Vector3 target) {
-    target_pos = target;
+    targetPos = target;
 }
 
 void Robot::setPIDParameters(float kp, float ti, float td) {
-    PID_controller.params().set_params(kp, ti, td);
+    PIDController.params().set_params(kp, ti, td);
 }
 
 void Robot::setColors(Color color1, Color color2) {
@@ -183,26 +185,26 @@ void Robot::teachPause(float time) {
 void Robot::attachPallet(const std::shared_ptr<EuroPallet> &pallet_) {
     pallet = pallet_;
 
-    rest_pos = pick_pos + (pallet->corner_pos - pick_pos) * 0.5f;
-    rest_pos.z = pick_pos.z + 100.0f;
-    program.setRestPosition(rest_pos);
+    restPos = pickPos + (pallet->cornerPos - pickPos) * 0.5f;
+    restPos.z = pickPos.z + 100.0f;
+    program.setRestPosition(restPos);
 }
 
 void Robot::attachConveyor(const std::shared_ptr<ConveyorBelt> &conveyor_) {
     conveyor = conveyor_;
-    pick_pos = conveyor->position.clone() + Vector3{0.0f, -100.0f, 196.0f};
-    program.generateSequence(pick_pos, false);
+    pickPos = conveyor->position.clone() + Vector3{0.0f, -100.0f, 196.0f};
+    program.generateSequence(pickPos, false);
 
     if (pallet) {
-        rest_pos = pick_pos + (pallet->corner_pos - pick_pos) * 0.5f;
-        rest_pos.z = pick_pos.z + 100.0f;
-        program.setRestPosition(rest_pos);
+        restPos = pickPos + (pallet->cornerPos - pickPos) * 0.5f;
+        restPos.z = pickPos.z + 100.0f;
+        program.setRestPosition(restPos);
     }
 
 }
 
 void Robot::pickUp() {
-    is_holding = true;
+    isHolding = true;
     item = conveyor->items.getTailValue();
     Vector3 drop_position = pallet->nextPosition(item);
     drop_position.z += item.size.z * 0.5f;
@@ -212,11 +214,11 @@ void Robot::pickUp() {
 }
 
 void Robot::drop() {
-    is_holding = false;
+    isHolding = false;
     item.mesh->position = pallet->nextPosition(item);
     pallet->addItem(item);
     *money += Box::value;
-    if (pallet->item_count == 32) {
+    if (pallet->itemCount == 32) {
         pallet->clear(scene);
         *money += pallet->getValue();
     }
@@ -228,12 +230,12 @@ Program Robot::getProgram() {
 }
 
 Vector3 Robot::getPos() {
-    return current_pos;
+    return currentPos;
 }
 
 void Robot::updateItemPosition() {
 
-    Vector3 new_pos = current_pos;
+    Vector3 new_pos = currentPos;
     new_pos.z -= item.size.z * 0.5f;
 
     item.mesh->position = new_pos;
@@ -244,23 +246,23 @@ void Robot::runLogic() {
         runProgram(true);
 
     if (program.running) {
-        if (program.is_holding && !is_holding) {
+        if (program.isHolding && !isHolding) {
             pickUp();
-        } else if (!program.is_holding && is_holding) {
+        } else if (!program.isHolding && isHolding) {
             drop();
         }
 
-        if (is_holding)
+        if (isHolding)
             updateItemPosition();
     }
 }
 
 void Robot::upgradeSpeed(float rate) {
-    if (*money > upgrade_cost) {
-        *money -= upgrade_cost;
-        upgrade_cost *= rate * rate;
-        speed_multiplier *= rate;
-        program.setR(1.0f / speed_multiplier);
+    if (*money > upgradeCost) {
+        *money -= upgradeCost;
+        upgradeCost *= rate * rate;
+        speedMultiplier *= rate;
+        program.setR(1.0f / speedMultiplier);
     }
 
 }

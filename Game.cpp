@@ -3,74 +3,18 @@
 //
 #include "Game.hpp"
 
-#include "threepp/extras/imgui/imgui_context.hpp"
 
-struct UpgradeUI : imgui_context {
-
-    bool mouseHovered = false;
-
-    bool upgradeRobotSpeed = false;
-    bool upgradeBeltSpeed = false;
-    bool upgradeSpawnRate = false;
-    bool upgradePalletReward = false;
-
-    float* robotSpeedUpgradeCost;
-    float* upgradeBeltSpeedCost;
-    float* upgradeSpawnRateCost;
-    float* upgradePalletRewardCost;
-
-    Vector3 pos;
-
-    explicit UpgradeUI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
-
-    void onRender() {
-
-        mouseHovered = ImGui::IsWindowHovered();
-        ImGui::Begin("", false, ImGuiWindowFlags_NoResize);
-        ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
-        ImGui::Text("Upgrades");
-
-        if (ImGui::Button("Robot Speed")) upgradeRobotSpeed = true;
-        ImGui::SameLine();
-        ImGui::Text("Cost: $50");
-
-        if (ImGui::Button("Belt Speed")) upgradeBeltSpeed = true;
-        ImGui::SameLine();
-        ImGui::Text("Cost: $50");
-
-        if (ImGui::Button("Spawn Rate")) upgradeSpawnRate = true;
-        ImGui::SameLine();
-        ImGui::Text("Cost: $50");
-
-        if (ImGui::Button("Pallet Reward")) upgradePalletReward = true;
-        ImGui::SameLine();
-        ImGui::Text("Cost: $50");
-
-        ImGui::End();
-    }
-};
-
-void Game::run(const std::array<int, 3> *serialData, char **port) {
-
-    Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
-    GLRenderer renderer(canvas);
-    renderer.setClearColor(Color::aliceblue);
+void Game::setupScene() {
 
     scene = Scene::create();
-
-    camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
     camera->position.set(700, -1000, 500);
     camera->up.set(0, 0, 1);
     camera->lookAt(0, 0, 0);
-
-    OrbitControls controls{camera, canvas};
-    controls.enableKeys = false;
 
     auto floor = BoxGeometry::create(5000, 5000, 0.1);
     auto floor_material = MeshBasicMaterial::create();
     floor_material->color = 0x111111;
     auto floor_mesh = Mesh::create(floor, floor_material);
-
     scene->add(floor_mesh);
 
     {
@@ -88,32 +32,80 @@ void Game::run(const std::array<int, 3> *serialData, char **port) {
         scene->add(light);
     }
 
+    raycaster = Raycaster{};
+}
+
+void Game::runVisualization(const std::array<int, 3> *serialData, char **port) {
+
+    Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
+    GLRenderer renderer(canvas);
+    renderer.setClearColor(Color::aliceblue);
+
+    camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
+    OrbitControls controls{camera, canvas};
+    controls.enableKeys = false;
+
+    setupScene();
+
+    addRobot();
+    addRobot({200.0f, 200.0f, 0.0f});
+
+    UI ui(canvas);
+
+    canvas.onWindowResize([&](WindowSize size) {
+        camera->aspect = size.getAspect();
+        camera->updateProjectionMatrix();
+        renderer.setSize(size);
+    });
+
+    canvas.animate([&](float dt) {
+
+        renderer.render(scene, camera);
+        ui.render();
+
+        controls.enabled = !ui.mouseHovered;
+        *port = ui.currentPort;
+
+        robots.getHeadValue()->goToSteps(*serialData);
+    });
+}
+
+void Game::runGame() {
+
+    Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
+    GLRenderer renderer(canvas);
+    renderer.setClearColor(Color::aliceblue);
+
+    camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
+    OrbitControls controls{camera, canvas};
+    controls.enableKeys = false;
+
+    setupScene();
+
+    // Setting up listeners
+
+    // ------------------------ Code from threepp examples
     // Key Listener
-    float t = 0;
-    KListener keyListener{t};
+    KListener keyListener(t1);
     canvas.addKeyListener(&keyListener);
 
     // Mouse Listener
-    float t2 = 0;
-    MListener mouseListener{t2};
+    MListener mouseListener(t2);
     canvas.addMouseListener(&mouseListener);
 
     // Mouse Ray
     mouse = {-Infinity<float>, -Infinity<float>};
 
     MouseMoveListener l([&](Vector2 pos) {
-        // calculate mouse position in normalized device coordinates
-        // (-1 to +1) for both components
 
         auto size = canvas.getSize();
         mouse.x = (pos.x / static_cast<float>(size.width)) * 2 - 1;
         mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
     });
+
     canvas.addMouseListener(&l);
 
-    raycaster = Raycaster{};
-
-    ////////////////
+    // ------------------------------------------------------------------
 
     double MONEY = 200.0f;
     AR2::Robot::money = &MONEY;
@@ -137,9 +129,7 @@ void Game::run(const std::array<int, 3> *serialData, char **port) {
 
         auto node = robots.getHead();
 
-
         checkListenerActions(&keyListener, &mouseListener);
-
 
         while (node != nullptr) {
             node->value->update(dt);
@@ -148,38 +138,25 @@ void Game::run(const std::array<int, 3> *serialData, char **port) {
 
         renderer.render(scene, camera);
 
-
         textHandle.setText("Money " + std::to_string((int) MONEY));
         upgradeUI.render();
+        controls.enabled = !upgradeUI.mouseHovered;
 
         if (upgradeUI.upgradePalletReward) robots.getTailValue()->pallet->upgradeDeliverValue(1.1);
         if (upgradeUI.upgradeSpawnRate) robots.getTailValue()->conveyor->upgradeSpawnRate(1.1);
         if (upgradeUI.upgradeBeltSpeed) robots.getTailValue()->conveyor->upgradeSpeed(1.1);
         if (upgradeUI.upgradeRobotSpeed) robots.getTailValue()->upgradeSpeed(1.1);
 
-        /*
-        ui.render();
-        UI ui(canvas);
-
-        controls.enabled = !ui.mouseHovered;
-        *port = ui.current_port;
-        */
     });
 }
 
-void Game::addRobot() {
-    raycaster.setFromCamera(mouse, camera);
-    auto intersects = raycaster.intersectObjects(scene->children);
-    if (!intersects.empty()) {
+void Game::addRobot(Vector3 pos) {
 
-        Vector3 world_pos = intersects.front().point;
-
-        robots.insertAtTail(AR2::Robot::create());
-        robots.getTailValue()->moveBaseTo(world_pos);
-        scene->add(robots.getTailValue()->getMesh());
-        robots.getTailValue()->gripper->mesh->visible = false;
-        robots.getTailValue()->scene = scene;
-    }
+    robots.insertAtTail(AR2::Robot::create());
+    robots.getTailValue()->moveBaseTo(pos);
+    scene->add(robots.getTailValue()->getMesh());
+    robots.getTailValue()->gripper->mesh->visible = false;
+    robots.getTailValue()->scene = scene;
 }
 
 
@@ -232,8 +209,14 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
 
     if (keyListener->current == keyListener->b_ && mouseListener->LEFTCLICK) {
         if (robots.length() == 0 || robots.getTailValue()->conveyor && robots.getTailValue()->pallet) {
-            addRobot();
-            keyListener->current = 0;
+
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                Vector3 worldPos = intersects.front().point;
+                addRobot(worldPos);
+                keyListener->current = 0;
+            }
         }
     }
 
@@ -251,7 +234,3 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
 
     }
 }
-
-
-// Serial data position
-//robots.getHead()->value->go_to_steps(*A, *B, *C);

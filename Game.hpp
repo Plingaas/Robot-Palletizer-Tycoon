@@ -11,6 +11,7 @@
 #include "threepp/core/Raycaster.hpp"
 #include "robot_arm/Robot.hpp"
 #include "UI/UI.hpp"
+#include "ui/UpgradeUI.hpp"
 #include "listener/Listener.hpp"
 #include "serial_communication/Serial.hpp"
 #include "helpers/LinkedList.hpp"
@@ -31,6 +32,11 @@ private:
 
     std::shared_ptr<PerspectiveCamera> camera;
     std::shared_ptr<Scene> scene;
+
+    // For listeners
+    float t1 = 0;
+    float t2 = 0;
+
     Raycaster raycaster;
     Vector2 mouse;
 
@@ -45,25 +51,47 @@ public:
     Game(){};
 
     /**
-     * @brief Starts the game.
+     * @brief Sets up the scene
      *
-     * This is the function that starts the whole game.
-     * Once this function is called the game is ran until
+     * Adds floor, light, etc...
+     *
+     * @return void.
+     */
+    void setupScene();
+
+    void setupListeners(Canvas *canvas);
+
+    /**
+     * @brief Starts the visualization tool
+     *
+     * This is the function that starts the visualization tool.
+     * Once this function is called the tool is ran until
      * the window is closed.
      *
-     * @param serialData The serial data for visualizing a real robot.
+     * @param serialData The serial data from the real robot..
      * @param port The port to connect to.
      *
      * @return void.
      */
-    void run(const std::array<int, 3> *serialData, char **port);
+    void runVisualization(const std::array<int, 3> *serialData, char **port);
 
     /**
-     * @brief Adds a robot to the back of the list.
+     * @brief Starts the game.
+     *
+     * This is the function that starts the game.
+     * Once this function is called the game is ran until
+     * the window is closed.
      *
      * @return void.
      */
-    void addRobot();
+    void runGame();
+    /**
+     * @brief Adds a robot to the back of the list.
+     *
+     * @param pos Position to place the robot.
+     * @return void.
+     */
+    void addRobot(Vector3 pos = {0.0f, 0.0f, 0.0f});
 
     /**
      * @brief Creates a conveyor belt for the robot.

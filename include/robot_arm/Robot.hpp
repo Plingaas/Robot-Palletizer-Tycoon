@@ -35,7 +35,7 @@ namespace AR2 {
         std::unique_ptr<Joint> j6;
         std::unique_ptr<Joint> gripper;
 
-        bool PID_active = true;
+        bool PIDActive = true;
         inline static double *money = nullptr;
         std::shared_ptr<Scene> scene;
 
@@ -44,11 +44,11 @@ namespace AR2 {
         std::shared_ptr<EuroPallet> pallet = nullptr;
 
         // Item related positions
-        Vector3 rest_pos{};
-        Vector3 pick_pos{};
-        Vector3 drop_pos{};
+        Vector3 restPos{};
+        Vector3 pickPos{};
+        Vector3 dropPos{};
 
-        bool is_holding = false;
+        bool isHolding = false;
         Item item;
 
         /**
@@ -134,11 +134,9 @@ namespace AR2 {
          * is sent in the steps domain. This function will translate steps to
          * degrees and move the joints correspondingly.
          *
-         * @param j1_steps Stepper motor 1 step position.
-         * @param j2_steps Stepper motor 2 step position.
-         * @param j3_steps Stepper motor 3 step position.
+         * @param steps Array with all stepper motors' step count.
          */
-        void goToSteps(float j1_steps, float j2_steps, float j3_steps);
+        void goToSteps(const std::array<int, 3> &steps);
 
         /**
          * @brief Sets the color of the robot.
@@ -303,13 +301,13 @@ namespace AR2 {
 
     private:
 
-        float speed_multiplier = 1.0f;
-        float upgrade_cost = 5.0f;
+        float speedMultiplier = 1.0f;
+        float upgradeCost = 5.0f;
 
-        Vector3 base_pos;
-        Vector3 target_pos{0, 0, 0};
-        Vector3 current_pos{0.0f, -350.0f, 150.0f};
-        PID PID_controller;
+        Vector3 basePos;
+        Vector3 targetPos{0, 0, 0};
+        Vector3 currentPos{0.0f, -350.0f, 150.0f};
+        PID PIDController;
 
         Program program;
 

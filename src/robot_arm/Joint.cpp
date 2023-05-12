@@ -16,7 +16,7 @@ Joint::Joint(std::shared_ptr<BufferGeometry> &geometry, Color color) {
 };
 
 void Joint::setRotationAxis(Axis axis) {
-    rotation_axis = axis;
+    rotationAxis = axis;
 };
 
 void Joint::setRotation(Vector3 rot) const {
@@ -30,11 +30,11 @@ void Joint::setPosition(Vector3 pos) const {
 
 void Joint::goTo(float rad) {
 
-    if (reverse_rotation)
+    if (reverseRotation)
         rad = -rad;
 
     // Set rotation
-    switch (rotation_axis) {
+    switch (rotationAxis) {
         case x:
             mesh->rotation.x = rad;
             break;
@@ -48,5 +48,5 @@ void Joint::goTo(float rad) {
 }
 
 void Joint::setReverseRotation(bool reverse) {
-    reverse_rotation = reverse;
+    reverseRotation = reverse;
 }

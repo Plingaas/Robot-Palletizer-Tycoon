@@ -17,10 +17,10 @@ class EuroPallet {
 public:
 
     std::shared_ptr<Mesh> mesh;
-    Vector3 corner_pos;
+    Vector3 cornerPos;
 
     List<Item> items;
-    int item_count = 0;
+    int itemCount = 0;
 
     /**
      * @brief The EuroPallet constructor
@@ -64,7 +64,7 @@ public:
      */
     void setPosition(Vector3 pos) {
         mesh->position = pos;
-        corner_pos = pos.sub({360.0f, 120.0f, -43.2f});
+        cornerPos = pos.sub({360.0f, 120.0f, -43.2f});
     }
 
     /**
@@ -78,7 +78,7 @@ public:
      */
     void addItem(const Item &item) {
         items.insertAtTail(item);
-        item_count++;
+        itemCount++;
     }
 
     /**
@@ -113,7 +113,7 @@ public:
      *
      * @return Returns a float with the reward value.
      */
-    [[nodiscard]] float getValue() const { return deliver_value * deliver_value_multiplier; }
+    [[nodiscard]] float getValue() const { return deliverValue * deliverValueMultiplier; }
 
 
     /**
@@ -125,14 +125,14 @@ public:
      * @param multiplier The multiplier to upgrade with.
      * @return void.
      */
-    void upgradeDeliverValue(float multiplier) { deliver_value_multiplier *= multiplier; }
+    void upgradeDeliverValue(float multiplier) { deliverValueMultiplier *= multiplier; }
 
 private:
 
     /**
      * @brief The cash reward for a fully stacked pallet.
      */
-    float deliver_value = 100.0f;
+    float deliverValue = 100.0f;
 
     /**
      * @brief The multiplier for the cash reward.
@@ -141,7 +141,7 @@ private:
      * you get a cash reward that is multiplied by
      * this multiplier.
      */
-    float deliver_value_multiplier = 1.0f;
+    float deliverValueMultiplier = 1.0f;
 };
 
 

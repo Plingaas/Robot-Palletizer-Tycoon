@@ -37,10 +37,10 @@ void Program::update(float dt) {
                 running = false;
         } else {
             index++;
-            if (index == pick_index)
-                is_holding = true;
-            if (index == drop_index)
-                is_holding = false;
+            if (index == pickIndex)
+                isHolding = true;
+            if (index == dropIndex)
+                isHolding = false;
         }
     }
 

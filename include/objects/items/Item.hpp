@@ -28,12 +28,12 @@ struct Item {
     /**
      * @brief How far it should move on the belt.
      */
-    float max_move = 900.0f;
+    float maxMove = 900.0f;
 
     /**
      * @brief How far it has moved since it was spawned.
      */
-    float has_moved = 0.0f;
+    float hasMoved = 0.0f;
 
     /**
      * @brief Sets the color of the item.
@@ -62,7 +62,7 @@ struct Item {
         if (axis < 0 || axis > 2)
             return;
         mesh->position[axis] += displacement;
-        has_moved += displacement;
+        hasMoved += displacement;
     }
 
     /**
@@ -75,7 +75,7 @@ struct Item {
      *
      */
     float toMove() {
-        return max_move - has_moved;
+        return maxMove - hasMoved;
     }
 
     /**

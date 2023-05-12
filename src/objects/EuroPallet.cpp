@@ -8,8 +8,8 @@ Vector3 EuroPallet::nextPosition(const Item &item) {
     Vector3 offset = {item.size.x, item.size.y, item.size.z};
     offset.multiplyScalar(0.5f);
 
-    int z_index = (int) (item_count / 8);
-    int plane_index = (item_count) % 8;
+    int z_index = (int) (itemCount / 8);
+    int plane_index = (itemCount) % 8;
 
     offset.z += item.size.z * ((float) z_index);
 
@@ -18,15 +18,15 @@ Vector3 EuroPallet::nextPosition(const Item &item) {
     else
         offset.add({item.size.x * ((float) (plane_index - 4)), item.size.y, 0.0f});
 
-    Vector3 position = corner_pos + offset;
+    Vector3 position = cornerPos + offset;
 
     return position;
 }
 
 void EuroPallet::clear(std::shared_ptr<Scene> &scene) {
-    while (item_count > 0) {
+    while (itemCount > 0) {
         scene->remove(items.getTailValue().mesh);
         items.deleteTail();
-        item_count--;
+        itemCount--;
     }
 }

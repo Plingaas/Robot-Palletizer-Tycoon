@@ -52,13 +52,13 @@ public:
     bool running = false;
 
     // Which index of the program that the robot arm should pick an item up
-    unsigned int pick_index = 4;
+    unsigned int pickIndex = 4;
 
     // Which index of the program that the robot arm should drop an item.
-    unsigned int drop_index = 11;
+    unsigned int dropIndex = 11;
 
     // If an item is currently being held.
-    bool is_holding = false;
+    bool isHolding = false;
 
     /**
      * @brief Generates a drop sequence for new drop positions

@@ -19,33 +19,33 @@ public:
 
     // Meshes
     std::shared_ptr<Group> conveyor;
-    std::shared_ptr<Mesh> leg_mesh;
-    std::shared_ptr<Mesh> body_mesh;
-    std::shared_ptr<Mesh> belt_mesh;
+    std::shared_ptr<Mesh> legMesh;
+    std::shared_ptr<Mesh> bodyMesh;
+    std::shared_ptr<Mesh> beltMesh;
 
     std::shared_ptr<Scene> scene_;
     List<Item> items;
 
     // Position for conveyor and start offset for item start position.
     Vector3 position{};
-    Vector3 start_offset{};
+    Vector3 startOffset{};
 
     // Spawn rate and belt speed
-    float spawn_rate = 1.0f;
+    float spawnRate = 1.0f;
     float speed = 250.0f;
 
     // Whether belt is running or not.
     bool running = false;
 
-    float time_since_last_spawn = spawn_rate;
+    float timeSinceLastSpawn = spawnRate;
 
     /**
      * @brief The constructor for the conveyor belt.
      *
-     * @param leg_height How tall the legs should be.
+     * @param legHeight How tall the legs should be.
      * @param pos Where to place the conveyor.
      */
-    explicit ConveyorBelt(float leg_height, Vector3 pos = {0.0f, 0.0f, 0.0f});
+    explicit ConveyorBelt(float legHeight, Vector3 pos = {0.0f, 0.0f, 0.0f});
 
     /**
      * @brief Updates everything related to the conveyor belt.
@@ -83,7 +83,7 @@ public:
      * @param color The new color.
      * @return void.
      */
-    void setLegColor(Color color) const { changeMeshColor(leg_mesh, color); }
+    void setLegColor(Color color) const { changeMeshColor(legMesh, color); }
 
     /**
      * @brief Sets the color of the body.
@@ -94,7 +94,7 @@ public:
      * @param color The new color.
      * @return void.
      */
-    void setBodyColor(Color color) const { changeMeshColor(body_mesh, color); }
+    void setBodyColor(Color color) const { changeMeshColor(bodyMesh, color); }
 
     /**
      * @brief Sets the color of the belt.
@@ -105,7 +105,7 @@ public:
      * @param color The new color.
      * @return void.
      */
-    void setBeltColor(Color color) const { changeMeshColor(belt_mesh, color); }
+    void setBeltColor(Color color) const { changeMeshColor(beltMesh, color); }
 
     /**
      * @brief Sets the position of the conveyor.
@@ -113,12 +113,12 @@ public:
      * The position of the conveyor is located at the center of the
      * end of the belt on the side where items stop.
      *
-     * @param position_ The position to be set.
+     * @param pos The position to be set.
      * @return void.
      */
-    void setPosition(Vector3 position_) {
-        conveyor->position = position_;
-        position = position_;
+    void setPosition(Vector3 pos) {
+        conveyor->position = pos;
+        position = pos;
     }
 
     /**
@@ -159,7 +159,7 @@ public:
      * @param multiplier The multitiplier to decrease the time by.
      * @return void.
      */
-    void upgradeSpawnRate(float multiplier) { spawn_rate /= multiplier; }
+    void upgradeSpawnRate(float multiplier) { spawnRate /= multiplier; }
 
     /**
      * @brief Upgrades the belt speed
@@ -174,8 +174,8 @@ public:
 
 private:
 
-    float leg_height = 200.0f;
-    unsigned int item_count = items.length();
+    float legHeight = 200.0f;
+    unsigned int itemCount = items.length();
 
 };
 
