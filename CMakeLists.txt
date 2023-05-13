@@ -6,11 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(threepp CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-# kanskje ditta e nokke feil med, d har med catch 2 å gjøre elns
-add_executable(CI_test)
-target_include_directories(CI_test PUBLIC "${CMAKE_SOURCE_DIR}/include")
-#
-
 include(FetchContent)
 FetchContent_Declare(
         Catch2
