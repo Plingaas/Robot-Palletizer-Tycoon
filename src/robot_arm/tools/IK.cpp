@@ -187,12 +187,12 @@ namespace AR2 {
     };
 
     bool withinWorkArea(Angles angles) {
-        if (angles.theta1 < J1_LOWER_LIMIT || angles.theta1 > J1_UPPER_LIMIT || isnan(angles.theta1)) return false;
-        if (angles.theta2 < J2_LOWER_LIMIT || angles.theta2 > J2_UPPER_LIMIT || isnan(angles.theta2)) return false;
-        if (angles.theta3 < J3_LOWER_LIMIT || angles.theta3 > J3_UPPER_LIMIT || isnan(angles.theta3)) return false;
-        if (angles.theta4 < J4_LOWER_LIMIT || angles.theta1 > J4_UPPER_LIMIT || isnan(angles.theta4)) return false;
-        if (angles.theta5 < J5_LOWER_LIMIT || angles.theta2 > J5_UPPER_LIMIT || isnan(angles.theta5)) return false;
-        if (angles.theta6 < J6_LOWER_LIMIT || angles.theta3 > J6_UPPER_LIMIT || isnan(angles.theta6)) return false;
+        if (angles.theta1 < J1_LOWER_LIMIT || angles.theta1 > J1_UPPER_LIMIT || std::isnan(angles.theta1)) return false;
+        if (angles.theta2 < J2_LOWER_LIMIT || angles.theta2 > J2_UPPER_LIMIT || std::isnan(angles.theta2)) return false;
+        if (angles.theta3 < J3_LOWER_LIMIT || angles.theta3 > J3_UPPER_LIMIT || std::isnan(angles.theta3)) return false;
+        if (angles.theta4 < J4_LOWER_LIMIT || angles.theta1 > J4_UPPER_LIMIT || std::isnan(angles.theta4)) return false;
+        if (angles.theta5 < J5_LOWER_LIMIT || angles.theta2 > J5_UPPER_LIMIT || std::isnan(angles.theta5)) return false;
+        if (angles.theta6 < J6_LOWER_LIMIT || angles.theta3 > J6_UPPER_LIMIT || std::isnan(angles.theta6)) return false;
 
         return true;
     };
