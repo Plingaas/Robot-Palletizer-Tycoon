@@ -1,4 +1,3 @@
-#ifdef WIN32
 #include "ui/VizUI.hpp"
 
 using namespace threepp;
@@ -22,6 +21,7 @@ void VizUI::onRender() {
     ImGui::SameLine();
     ImGui::DragFloat("##z", &pos.z);
 
+#ifdef WIN32
     ImGui::NewLine();
 
     ImDrawList *draw_list = ImGui::GetWindowDrawList();
@@ -48,8 +48,7 @@ void VizUI::onRender() {
         }
         ImGui::EndCombo();
     }
-
+#endif // WIN32
     mouseHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
-#endif

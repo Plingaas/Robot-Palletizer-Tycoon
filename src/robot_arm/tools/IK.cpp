@@ -8,25 +8,25 @@ namespace AR2 {
         return Matrix3
                 {
                         1, 0, 0,
-                        0, cos(angle), -sin(angle),
-                        0, sin(angle), cos(angle)
+                        0, cos(angle), -std::sin(angle),
+                        0, std::sin(angle), cos(angle)
                 };
     }
 
     Matrix3 RY(float angle) {
         return Matrix3
                 {
-                        cos(angle), 0, sin(angle),
+                        std::cos(angle), 0, std::sin(angle),
                         0, 1, 0,
-                        -sin(angle), 0, cos(angle)
+                        -std::sin(angle), 0, std::cos(angle)
                 };
     }
 
     Matrix3 RZ(float angle) {
         return Matrix3
                 {
-                        cos(angle), -sin(angle), 0,
-                        sin(angle), cos(angle), 0,
+                        std::cos(angle), -std::sin(angle), 0,
+                        std::sin(angle), std::cos(angle), 0,
                         0, 0, 1
                 };
     }
@@ -66,8 +66,8 @@ namespace AR2 {
     Vector3 D0_1(float angle) {
         return Vector3
                 {
-                        a2 * cos(angle),
-                        a2 * sin(angle),
+                        a2 * std::cos(angle),
+                        a2 * std::sin(angle),
                         a1
                 };
     };
@@ -75,8 +75,8 @@ namespace AR2 {
     Vector3 D1_2(float angle) {
         return Vector3
                 {
-                        a3 * cos(angle),
-                        a3 * sin(angle),
+                        a3 * std::cos(angle),
+                        a3 * std::sin(angle),
                         0
                 };
     };
@@ -111,9 +111,9 @@ namespace AR2 {
     Vector3 D5_6(float angle) {
         return Vector3
                 {
-                        (a5 + a6) * sin(angle),
+                        (a5 + a6) * std::sin(angle),
                         0,
-                        (a5 + a6) * cos(angle)
+                        (a5 + a6) * std::cos(angle)
                 };
     };
 
@@ -147,10 +147,10 @@ namespace AR2 {
         float r = DH_values[2];
         float d = DH_values[3];
 
-        float ct = cos(theta);
-        float ca = cos(alpha);
-        float st = sin(theta);
-        float sa = sin(alpha);
+        float ct = std::cos(theta);
+        float ca = std::cos(alpha);
+        float st = std::sin(theta);
+        float sa = std::sin(alpha);
 
         // Denavit-Hartenberg transformation matrix
         return Matrix4
@@ -212,20 +212,20 @@ namespace AR2 {
     };
 
     Angles IK0_3(const Vector3 &position, const Matrix3 &R_target) {
-        float theta1 = atan2(position.y, position.x);
+        float theta1 = std::atan2(position.y, position.x);
         float z1_3 = position.z - a1;
-        float rx = position.x - a2 * cos(theta1);
-        float ry = position.y - a2 * sin(theta1);
-        float r = sqrt(rx * rx + ry * ry);
-        float phi2 = atan2(z1_3, r);
-        float r1 = sqrt(r * r + z1_3 * z1_3);
-        float phi1 = acos((a4 * a4 - r1 * r1 - a3 * a3) / (-2 * r1 * a3));
+        float rx = position.x - a2 * std::cos(theta1);
+        float ry = position.y - a2 * std::sin(theta1);
+        float r = std::sqrt(rx * rx + ry * ry);
+        float phi2 = std::atan2(z1_3, r);
+        float r1 = std::sqrt(r * r + z1_3 * z1_3);
+        float phi1 = std::acos((a4 * a4 - r1 * r1 - a3 * a3) / (-2 * r1 * a3));
         float theta2 = phi2 + phi1;
         float num = (r1 * r1 - a3 * a3 - a4 * a4) / (-2 * a3 * a4);
 
-        // sqrt() inaccuracy. This is needed to include certain edge case positions.
+        // std::sqrt() inaccuracy. This is needed to include certain edge case positions.
         if (num > -1.0000012 && num < -1.0) num = -1;
-        float phi3 = acos(num);
+        float phi3 = std::acos(num);
         float theta3 = phi3 - PI;
 
         return IK3_6(Vector3{theta1, theta2, theta3}, R_target);
@@ -240,9 +240,9 @@ namespace AR2 {
         float r32 = R3_6.elements[7];
         float r33 = R3_6.elements[8];
 
-        float theta4 = atan2(r23, r13) + PI;
-        float theta5 = acos(r33);
-        float theta6 = atan2(-r32, r31);
+        float theta4 = std::atan2(r23, r13) + PI;
+        float theta5 = std::acos(r33);
+        float theta6 = std::atan2(-r32, r31);
 
         return {angles.x, angles.y, angles.z, theta4, theta5, theta6};
     }
