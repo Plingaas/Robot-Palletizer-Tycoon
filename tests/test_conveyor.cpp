@@ -5,9 +5,6 @@
 
 #include <catch2/catch.hpp>
 
-// This wont work because the STL files cant be found
-// as they are located in the build folder. The same goes for
-// Robots,
 TEST_CASE("Conveyor Test") {
 
     ConveyorBelt::legSTLPath = "../bin/data/models/conveyor_legs.stl";
