@@ -81,7 +81,7 @@ public:
 
 
     //Overloaded Assignment Operator
-    List<T> operator=(const List<T> &otherList) {
+    List<T>& operator=(const List<T> &otherList) {
         if (&otherList != this) {
             if (head != NULL)                   //If list isn't empty then delete the whole list.
             {
@@ -156,7 +156,7 @@ public:
 
     /*------------------- Insertion Functions -------------------*/
     void insertAtHead(T item) {
-        ListItem<T> *temp = new ListItem<T>;
+        auto temp = new ListItem<T>;
         temp->value = item;
 
         temp->next = head;
@@ -171,7 +171,7 @@ public:
     }
 
     void insertAtTail(T item) {
-        ListItem<T> *temp = new ListItem<T>;
+        auto temp = new ListItem<T>;
         temp->value = item;
 
         temp->previous = tail;
@@ -187,7 +187,7 @@ public:
 
     ListItem<T> *insertSorted(T &item) {
 
-        ListItem<T> *temp = new ListItem<T>;
+        auto temp = new ListItem<T>;
         temp->value = item;
 
         if (head == NULL)       //If the list is empty
@@ -209,7 +209,7 @@ public:
                     temp->previous = current;
                     temp->next = current->next;
 
-                    if (current->next = NULL)
+                    if (current->next == NULL)
                         tail = temp;
 
                     current->next = temp;
@@ -260,12 +260,13 @@ public:
     }
 
     ListItem<T> *searchForL(T item) {
-        if (head == NULL)                //If the list is empty
-        {
+        if (head == NULL) {
             return NULL;
-        } else if (item > tail->value) {
+        }
+        else if (item > tail->value) {
             return NULL;
-        } else {
+        }
+        else {
             ListItem<T> *current = head;
 
             while (current != NULL && current->value <= item) {

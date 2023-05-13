@@ -1,6 +1,7 @@
 #ifndef THREEPP_VCPKG_TEST_IK_H
 #define THREEPP_VCPKG_TEST_IK_H
 
+#include <cmath>
 #include "threepp/threepp.hpp"
 
 using namespace threepp;
