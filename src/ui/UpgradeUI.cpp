@@ -2,7 +2,7 @@
 
 void UpgradeUI::onRender() {
 
-    ImGui::Begin("", false, ImGuiWindowFlags_NoResize);
+    ImGui::Begin("");
     ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
     ImGui::Text("Upgrades");
 
