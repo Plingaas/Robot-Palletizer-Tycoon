@@ -66,9 +66,8 @@ int main() {
     std::thread serial_thread(serial_comm);
 
     serial_thread.join();
-//#endif // WIN32
+#endif // WIN32
     app_thread.join();
 
 
 }
-#endif
