@@ -1,4 +1,3 @@
-find_package(threepp CONFIG REQUIRED)
 
 add_executable(test_serial_connection test_serial_connection.cpp ../src/serial_communication/Device.cpp ../src/serial_communication/Serial.cpp)
 add_test(NAME test_serial_connection COMMAND test_serial_connection)

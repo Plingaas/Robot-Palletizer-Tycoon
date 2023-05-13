@@ -11,11 +11,12 @@
  */
 class EuroPallet {
 public:
+    inline static std::shared_ptr<BufferGeometry> geometry = loadSTL("bin/data/models/euro_pallet.stl");
 
     std::shared_ptr<Mesh> mesh;
     Vector3 cornerPos;
 
-    List<Item> items;
+    List<std::shared_ptr<Item>> items;
     int itemCount = 0;
 
     float uPalletRewardCost = 5.0f;
@@ -28,7 +29,10 @@ public:
      *
      */
     explicit EuroPallet(Vector3 pos = {0.0f, 0.0f, 0.0f}) {
-        mesh = meshFromSTL("bin/data/models/euro_pallet.stl", Color::rosybrown);
+
+        auto material = MeshPhongMaterial::create();
+        material->color = Color::silver;
+        mesh = Mesh::create(geometry, material);
         setPosition(pos);
     };
 
@@ -74,7 +78,7 @@ public:
      * @param item A const reference to the item being added.
      * @return void.
      */
-    void addItem(const Item &item) {
+    void addItem(std::shared_ptr<Item> item) {
         items.insertAtTail(item);
         itemCount++;
     }
@@ -100,7 +104,7 @@ public:
      * @param item A const reference to the item to be placed.
      * @return A Vector3 with the position to place at.
      */
-    [[nodiscard]] Vector3 nextPosition(const Item &item);
+    [[nodiscard]] Vector3 nextPosition(const std::shared_ptr<Item> &item);
 
     /**
      * @brief Gets the value of the full pallet reward.

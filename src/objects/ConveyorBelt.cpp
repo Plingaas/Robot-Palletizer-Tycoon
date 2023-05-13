@@ -1,10 +1,9 @@
 #include "objects/ConveyorBelt.hpp"
 
-
 ConveyorBelt::ConveyorBelt(float leg_height, Vector3 pos) {
-    legMesh = meshFromSTL(legSTLPath, Color::whitesmoke, {1.0f, 1.0f, leg_height});
-    bodyMesh = meshFromSTL(bodySTLPath, Color::whitesmoke);
-    beltMesh = meshFromSTL(beltSTLPath, Color::orange);
+    legMesh = meshFromSTL(legSTLPath, 0x333333, {1.0f, 1.0f, leg_height});
+    bodyMesh = meshFromSTL(bodySTLPath, 0x333333);
+    beltMesh = meshFromSTL(beltSTLPath, Color::silver);
 
     legMesh->position.setZ(-leg_height);
 
@@ -26,15 +25,15 @@ void ConveyorBelt::update(float dt) {
             addItem();
         }
 
-        ListItem<Item> *node = items.getHead();
+        ListItem<std::shared_ptr<Item>> *node = items.getHead();
 
         float distance = dt * speed;
         for (int i = 0; i < itemCount; i++) {
-            if (node->value.toMove() < distance) {
-                node->value.move(distance, y);
+            if (node->value->toMove() < distance) {
+                node->value->move(distance, y);
                 running = true;
             } else {
-                node->value.move(distance, y);
+                node->value->move(distance, y);
             }
 
             node = node->next;
@@ -55,11 +54,13 @@ void ConveyorBelt::addItem() {
     if (running)
         return;
 
-    Box box;
-    box.mesh->position = conveyor->position + startOffset;
-    box.mesh->position.z += box.size.z * 0.5f;
-    items.insertAtHead(box);
+
+    std::shared_ptr<Item> block = ItemGenerator::generateRandomItem();
+    block->mesh->position = conveyor->position + startOffset;
+    block->mesh->position.z += block->size.z * 0.5f;
+
+    items.insertAtHead(block);
     itemCount++;
-    scene_->add(box.mesh);
+    scene_->add(block->mesh);
     timeSinceLastSpawn -= spawnRate;
 }

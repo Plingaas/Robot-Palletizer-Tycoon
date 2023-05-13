@@ -12,21 +12,27 @@ using namespace threepp;
  * It has a cube shape and a value of $1 every time
  * its stacked onto a pallet.
  */
-struct Box : Item {
+struct Box : public Item {
 
 public:
 
     /**
      * @brief The value of the box when stacked.
      */
-    inline static float value = 1.0f;
+    inline static float value = 5.0f;
 
     /**
      * @brief The box's constructor
      *
      * @param color The color of the box.
      */
-    explicit Box(Color color_ = Color::white);
+    explicit Box() {
+        auto color = math::randomInRange(0x555555, 0xffffff);
+        auto mat = MeshPhongMaterial::create();
+        mat->color = color;
+
+        mesh = Mesh::create(geometry, mat);
+    };
 
     /**
      * @brief Gets the value of the box.

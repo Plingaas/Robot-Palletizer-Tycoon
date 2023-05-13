@@ -105,9 +105,7 @@ void Game::runGame() {
         renderer.render(scene, camera);
         textHandle.setText("Money " + std::to_string((int) money));
 
-        std::cout << "BBBBBBBBBBB" << std::endl;
         ui->render();
-        std::cout << "CCCCCCCCCCC" << std::endl;
         controls.enabled = !ui->mouseHovered;
 
     });
@@ -120,7 +118,6 @@ void Game::addRobot(Vector3 pos) {
     newRobot->gripper->mesh->visible = false;
     newRobot->moveBaseTo(pos);
     scene->add(newRobot->getMesh());
-
 
     ui->upgradeRobotSpeedCost = &newRobot->uSpeedCost;
 
@@ -232,7 +229,7 @@ void Game::checkUpgrades() {
     if (ui->upgradeRobotSpeed) {
         if (money > robots.getTailValue()->uSpeedCost) {
             money -= robots.getTailValue()->uSpeedCost;
-            robots.getHeadValue()->upgradeSpeed(1.1);
+            robots.getTailValue()->upgradeSpeed(1.1);
         }
         ui->upgradeRobotSpeed = false;
     }

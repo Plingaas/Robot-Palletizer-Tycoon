@@ -46,7 +46,7 @@ namespace AR2 {
         Vector3 dropPos{};
 
         bool isHolding = false;
-        Item item;
+        std::shared_ptr<Item> item;
 
         float uSpeedCost = 10.0f;
 
@@ -310,7 +310,6 @@ namespace AR2 {
     private:
 
         float speedMultiplier = 1.0f;
-        float upgradeCost = 5.0f;
 
         Vector3 basePos;
         Vector3 targetPos{0, 0, 0};
@@ -330,9 +329,7 @@ namespace AR2 {
          */
         void goToAngles(Angles angles) const;
 
-
     };
-
 }
 
 #endif //THREEPP_VCPKG_TEST_ROBOT_H

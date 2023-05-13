@@ -13,7 +13,7 @@ AR2::Robot::Robot() {
     j4 = Joint::create(j4_geo, Color::pink);
     j5 = Joint::create(j5_geo, Color::purple);
     j6 = Joint::create(j6_geo, Color::pink);
-    gripper = Joint::create(gripper_geo, Color::purple);
+    gripper = Joint::create(gripper_geo, Color::white);
 
     j1->setRotationAxis(z);
     j2->setRotationAxis(y);
@@ -195,7 +195,7 @@ void Robot::pickUp() {
     isHolding = true;
     item = conveyor->items.getTailValue();
     Vector3 drop_position = pallet->nextPosition(item);
-    drop_position.z += item.size.z * 0.5f;
+    drop_position.z += item->size.z * 0.5f;
     program.generateSequence(drop_position, true);
     updateItemPosition();
     conveyor->removeItem();
@@ -203,9 +203,9 @@ void Robot::pickUp() {
 
 void Robot::drop() {
     isHolding = false;
-    item.mesh->position = pallet->nextPosition(item);
+    item->mesh->position = pallet->nextPosition(item);
     pallet->addItem(item);
-    *money += Box::value;
+    *money += item->getValue();
     if (pallet->itemCount == 32) {
         pallet->clear(scene);
         *money += pallet->getValue();
@@ -224,9 +224,9 @@ Vector3 Robot::getPos() {
 void Robot::updateItemPosition() {
 
     Vector3 new_pos = currentPos;
-    new_pos.z -= item.size.z * 0.5f;
+    new_pos.z -= item->size.z * 0.5f;
 
-    item.mesh->position = new_pos;
+    item->mesh->position = new_pos;
 }
 
 void Robot::runLogic() {
@@ -246,7 +246,7 @@ void Robot::runLogic() {
 }
 
 void Robot::upgradeSpeed(float rate) {
-    upgradeCost *= upgradeCostMultiplier;
+    uSpeedCost *= upgradeCostMultiplier;
     speedMultiplier *= rate;
     program.setR(1.0f / speedMultiplier);
 }

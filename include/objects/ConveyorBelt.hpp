@@ -1,7 +1,7 @@
 #ifndef ROBOTCONTROLLER_CONVEYORBELT_HPP
 #define ROBOTCONTROLLER_CONVEYORBELT_HPP
 
-#include "items/Box.hpp"
+#include "items/ItemGenerator.hpp"
 /**
  * @brief Represents a conveyor belt.
  *
@@ -25,7 +25,7 @@ public:
     std::shared_ptr<Mesh> beltMesh;
 
     std::shared_ptr<Scene> scene_;
-    List<Item> items;
+    List<std::shared_ptr<Item>> items;
 
     // Position for conveyor and start offset for item start position.
     Vector3 position{};

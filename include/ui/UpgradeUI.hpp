@@ -22,8 +22,22 @@ struct UpgradeUI : imgui_context {
 
     Vector3 pos;
 
+    /**
+     * @brief Constructor for the UpgradeUi.
+     *
+     * @param canvas The canvas the UpgradeUi will exist on.
+     *
+     * @return void.
+     */
     explicit UpgradeUI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
 
+    /**
+     * @brief The update loop.
+     *
+     * This is where the UpgradeUi is constructed and events are looked for.
+     *
+     * @return void.
+     */
     void onRender();
 };
 

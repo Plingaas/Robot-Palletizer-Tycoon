@@ -7,7 +7,9 @@
 using namespace threepp;
 
 // How much the cost is multiplied with when upgrading
-inline float upgradeCostMultiplier = 1.05f;
+inline float upgradeCostMultiplier = 1.15f;
+
+std::shared_ptr<Texture> loadTexture(const std::string& path);
 
 /**
  * @brief Loads the geometry of an STL file.

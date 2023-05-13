@@ -11,16 +11,7 @@
  */
 struct Item {
 
-    /**
-     * @brief The item's mesh.
-     */
-    std::shared_ptr<Mesh> mesh;
-
-    /**
-     * @brief The size of the item.
-     */
-    Vector3 size;
-
+protected:
     /**
      * @brief How far it should move on the belt.
      */
@@ -30,6 +21,29 @@ struct Item {
      * @brief How far it has moved since it was spawned.
      */
     float hasMoved = 0.0f;
+
+public:
+
+    /**
+     * @brief The size of the item.
+     */
+    inline static Vector3 size = {90.0f, 120.0f, 96.0f};
+
+    /**
+     * @brief The item's geometry
+     *
+     *  All items should have the same geometry
+     *  in order to make the stacking on pallets
+     *  and easier. It also makes it easier to
+     *  know when a pallet is full because pallets
+     *  will always look the same.
+     */
+    inline static std::shared_ptr<BufferGeometry> geometry = BoxGeometry::create(size.x, size.y, size.z);
+
+    /**
+     * @brief The item's mesh.
+     */
+    std::shared_ptr<Mesh> mesh;
 
     /**
      * @brief Sets the color of the item.
@@ -44,7 +58,6 @@ struct Item {
     void setColor(Color color) const {
         changeMeshColor(mesh, color);
     }
-
 
     /**
      * @brief Moves the item along an axis
@@ -84,10 +97,8 @@ struct Item {
      * @return A float with the value.
      *
      */
-    virtual float getValue() const { return 0.0f; };
+    [[nodiscard]] virtual float getValue() const { return 0.0f; };
 
-    // Destructor
-    ~Item() = default;;
 };
 
 
