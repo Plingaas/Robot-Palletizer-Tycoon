@@ -16,15 +16,27 @@ int main() {
     {
 
         bool mode = false;
-        std::cout << "Enter 0 to play the game.\nEnter 1 to open the visualization tool.\n";
-        std::cin >> mode;
 
-        if (mode) {
-            Visualization viz;
-            viz.runVisualization(serialData, &port);
-        } else {
-            Game game;
-            game.runGame();
+        std::cout << "Enter 0 to play the game.\nEnter 1 to open the visualization tool.\n";
+
+        while (true) {
+            if (std::cin >> mode) {
+                if (mode) {
+                    Visualization viz;
+                    viz.runVisualization(serialData, &port);
+                } else {
+                    Game game;
+                    game.runGame();
+                }
+
+                break;
+            } else {
+                std::cout << "Invalid input. Please enter either 0 or 1.\n";
+
+                // Clear the error and ignore the output
+                std::cin.clear();
+                while (std::cin.get() != '\n') continue;
+            }
         }
 
         exit(0);
