@@ -15,10 +15,10 @@ struct UpgradeUI : imgui_context {
     bool upgradeSpawnRate = false;
     bool upgradePalletReward = false;
 
-    float* upgradeRobotSpeedCost;
-    float* upgradeBeltSpeedCost;
-    float* upgradeSpawnRateCost;
-    float* upgradePalletRewardCost;
+    float* upgradeRobotSpeedCost = nullptr;
+    float* upgradeBeltSpeedCost = nullptr;
+    float* upgradeSpawnRateCost = nullptr;
+    float* upgradePalletRewardCost = nullptr;
 
     Vector3 pos;
 

@@ -82,9 +82,9 @@ void Robot::goTo(Vector3 pos) {
 }
 
 void Robot::goToSteps(const std::array<int, 3> &steps) {
-    float j1_angle = steps[0] * TO_RADIANS / J1_STEPS_PER_DEG;
-    float j2_angle = steps[1] * TO_RADIANS / J2_STEPS_PER_DEG;
-    float j3_angle = steps[2] * TO_RADIANS / J3_STEPS_PER_DEG;
+    float j1_angle = static_cast<float>(steps[0]) * TO_RADIANS / J1_STEPS_PER_DEG;
+    float j2_angle = static_cast<float>(steps[1]) * TO_RADIANS / J2_STEPS_PER_DEG;
+    float j3_angle = static_cast<float>(steps[2]) * TO_RADIANS / J3_STEPS_PER_DEG;
 
     Angles angles = IK3_6(Vector3{j1_angle, j2_angle, j3_angle});
 

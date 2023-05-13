@@ -3,6 +3,8 @@
 using namespace threepp;
 
 void VizUI::onRender() {
+
+    ImGui::SetNextWindowSize(ImVec2(800, 150));
     ImGui::Begin("Settings");
 
     ImGui::Text("X");

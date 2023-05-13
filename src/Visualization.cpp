@@ -96,8 +96,9 @@ void Visualization::runVisualization(const std::array<int, 3> &serialData, char 
         ui->render();
         controls.enabled = !ui->mouseHovered;
         target->position = ui->pos;
+
         if (ui->moveButtonClicked) {
-            robotControl->setTarget(target->position);
+            robotControl->setTarget(target->position.add(Vector3{0.0f, 0.0f, 52.66f})); // Add gripper length, no time for better fix.
             ui->moveButtonClicked = false;
         }
 

@@ -38,7 +38,11 @@ void Game::setupScene() {
 
 void Game::runGame() {
 
-    Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
+    Canvas canvas(Canvas::Parameters()
+                        .size({1280, 720})
+                        .antialiasing(8)
+                        .title("Robot Palletizer Tycoon")
+    );
     GLRenderer renderer(canvas);
     renderer.setClearColor(Color::aliceblue);
 
@@ -101,7 +105,9 @@ void Game::runGame() {
         renderer.render(scene, camera);
         textHandle.setText("Money " + std::to_string((int) money));
 
+        std::cout << "BBBBBBBBBBB" << std::endl;
         ui->render();
+        std::cout << "CCCCCCCCCCC" << std::endl;
         controls.enabled = !ui->mouseHovered;
 
     });
@@ -115,15 +121,12 @@ void Game::addRobot(Vector3 pos) {
     newRobot->moveBaseTo(pos);
     scene->add(newRobot->getMesh());
 
-    ui->upgradeBeltSpeedCost = &newRobot->conveyor->uSpeedCost;
-    ui->upgradeSpawnRateCost = &newRobot->conveyor->uSpawnRateCost;
-    ui->upgradePalletRewardCost = &newRobot->pallet->uPalletRewardCost;
+
     ui->upgradeRobotSpeedCost = &newRobot->uSpeedCost;
 
     robots.insertAtTail(newRobot);
 
 }
-
 
 std::shared_ptr<ConveyorBelt> Game::createConveyor() {
     raycaster.setFromCamera(mouse, camera);
@@ -133,6 +136,9 @@ std::shared_ptr<ConveyorBelt> Game::createConveyor() {
         auto conveyor = std::make_shared<ConveyorBelt>(100.0f, Vector3{world_pos.x, world_pos.y, 20.0f});
         scene->add(conveyor->conveyor);
         conveyor->scene_ = scene;
+
+        ui->upgradeBeltSpeedCost = &conveyor->uSpeedCost;
+        ui->upgradeSpawnRateCost = &conveyor->uSpawnRateCost;
 
         return conveyor;
     }
@@ -148,6 +154,8 @@ std::shared_ptr<EuroPallet> Game::createPallet() {
         auto pallet = std::make_shared<EuroPallet>();
         pallet->setPosition(world_pos.x + 180.0f, world_pos.y, 0.0f);
         scene->add(pallet->mesh);
+
+        ui->upgradePalletRewardCost = &pallet->uPalletRewardCost;
 
         return pallet;
     }
@@ -194,26 +202,29 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
 }
 
 void Game::checkUpgrades() {
-    if (robots.length() == 0 || robots.getHeadValue()->pallet == nullptr || robots.getHeadValue()->conveyor == nullptr)
+
+    if (robots.length() == 0 || robots.getTailValue()->pallet == nullptr || robots.getTailValue()->conveyor == nullptr) {
         return;
+    }
+
     if (ui->upgradePalletReward) {
         if (money > robots.getTailValue()->pallet->uPalletRewardCost) {
             money -= robots.getTailValue()->pallet->uPalletRewardCost;
-            robots.getHeadValue()->pallet->upgradePalletReward(1.1);
+            robots.getTailValue()->pallet->upgradePalletReward(1.1);
         }
         ui->upgradePalletReward = false;
     }
     if (ui->upgradeSpawnRate) {
         if (money > robots.getTailValue()->conveyor->uSpawnRateCost) {
             money -= robots.getTailValue()->conveyor->uSpawnRateCost;
-            robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1);
+            robots.getTailValue()->conveyor->upgradeSpawnRate(1.1);
         }
         ui->upgradeSpawnRate = false;
     }
     if (ui->upgradeBeltSpeed) {
         if (money > robots.getTailValue()->conveyor->uSpeedCost) {
             money -= robots.getTailValue()->conveyor->uSpeedCost;
-            robots.getHeadValue()->conveyor->upgradeSpeed(1.1);
+            robots.getTailValue()->conveyor->upgradeSpeed(1.1);
         }
 
         ui->upgradeBeltSpeed = false;
