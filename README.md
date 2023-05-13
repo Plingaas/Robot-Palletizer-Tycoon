@@ -30,6 +30,7 @@ This project also includes a standalone visualization tool for Chris Annin Robot
 - **Live Control**: Send data to the robot and control its movement in real-time.
 
 ![photo: Chris Annin Robot Arm Visualization](resources/images/controller.png)
+![photo: Chris Annin Robot Arm Visualization](resources/images/visualize.png)
 
 ## Getting Started
 

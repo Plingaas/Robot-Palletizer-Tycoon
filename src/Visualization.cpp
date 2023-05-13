@@ -90,7 +90,6 @@ void Visualization::runVisualization(const std::array<int, 3> &serialData, char 
 
     canvas.animate([&](float dt) {
 
-
         renderer.render(scene, camera);
 
         ui->render();
