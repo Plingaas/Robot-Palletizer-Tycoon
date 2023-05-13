@@ -6,7 +6,7 @@
 #define ROBOTCONTROLLER_VISUALIZATION_H
 #include "threepp/threepp.hpp"
 #include "serial_communication/Serial.hpp"
-#include "UI/VizUI.hpp"
+#include "ui/VizUI.hpp"
 #include "robot_arm/Robot.hpp"
 
 using namespace threepp;

@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(threepp CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 
-add_executable(CI_test main.cpp)
-target_include_directories(CI_test PUBLIC "${CMAKE_SOURCE_DIR}/include")
-
 include(FetchContent)
 FetchContent_Declare(
         Catch2
@@ -24,5 +21,5 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 file(COPY "${CMAKE_SOURCE_DIR}/resources/models" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data)
-add_executable(game ${SOURCES} main.cpp Game.hpp Game.cpp Visualization.cpp Visualization.hpp)
+add_executable(game ${SOURCES} main.cpp)
 target_link_libraries(game PRIVATE threepp::threepp imgui::imgui)

@@ -34,11 +34,23 @@ This project also includes a standalone visualization tool for Chris Annin Robot
 ## Getting Started
 
 ### Requirements
+- CLion
+- vcpkg
 - Real robot must be run using https://github.com/Plingaas/RobotArm.
 - Windows for robot control (optional)
 - Serial USB connection for robot control (optional)
 
+Start by downloading CLion if you dont already have it installed. Once CLion is installed
+create a new project from version control and copy the link found under the dropdown menu "<> Code".
+Before you run the project you have to add a CMake option.
 
-## License
+#### Adding CMake option on Windows:
+1. Press file -> Settings -> Build Executement and Deployment -> CMake
+2. Paste this under CMake options: -DCMAKE_TOOLCHAIN_FILE=<path to vcpkg>/scripts/buildsystems/vcpkg.cmake
+3. Replace "<path to vcpkg" with your full path to your vcpkg folder.
 
-This project is licensed under the MIT License.
+#### Adding CMake option on MacOS:
+1. Press CLion -> Preferences -> Build Executement and Deployment -> CMake
+2. Paste this under CMake options: -DCMAKE_TOOLCHAIN_FILE=<path to vcpkg>/scripts/buildsystems/vcpkg.cmake
+3. Replace "<path to vcpkg" with your full path to your vcpkg folder.
+
