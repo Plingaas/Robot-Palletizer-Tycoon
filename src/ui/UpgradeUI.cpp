@@ -12,7 +12,7 @@ void UpgradeUI::onRender() {
 
     if (ImGui::Button("Belt Speed")) upgradeBeltSpeed = true;
     ImGui::SameLine();
-    ImGui::Text("Cost: $50");
+    ImGui::Text("Cost: $50", upgradeBeltSpeedCost);
 
     if (ImGui::Button("Spawn Rate")) upgradeSpawnRate = true;
     ImGui::SameLine();

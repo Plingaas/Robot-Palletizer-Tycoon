@@ -18,6 +18,8 @@ public:
     List<Item> items;
     int itemCount = 0;
 
+    float uPalletRewardCost = 5.0f;
+
     /**
      * @brief The EuroPallet constructor
      *
@@ -109,7 +111,7 @@ public:
      *
      * @return Returns a float with the reward value.
      */
-    [[nodiscard]] float getValue() const { return deliverValue * deliverValueMultiplier; }
+    [[nodiscard]] float getValue() const { return palletReward * palletRewardMultiplier; }
 
 
     /**
@@ -121,14 +123,17 @@ public:
      * @param multiplier The multiplier to upgrade with.
      * @return void.
      */
-    void upgradeDeliverValue(float multiplier) { deliverValueMultiplier *= multiplier; }
+    void upgradePalletReward(float multiplier) {
+        palletRewardMultiplier *= multiplier;
+        uPalletRewardCost *= upgradeCostMultiplier;
+    }
 
 private:
 
     /**
      * @brief The cash reward for a fully stacked pallet.
      */
-    float deliverValue = 100.0f;
+    float palletReward = 100.0f;
 
     /**
      * @brief The multiplier for the cash reward.
@@ -137,7 +142,7 @@ private:
      * you get a cash reward that is multiplied by
      * this multiplier.
      */
-    float deliverValueMultiplier = 1.0f;
+    float palletRewardMultiplier = 1.0f;
 };
 
 

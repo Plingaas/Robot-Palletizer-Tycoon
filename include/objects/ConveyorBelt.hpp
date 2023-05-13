@@ -32,8 +32,10 @@ public:
     Vector3 startOffset{};
 
     // Spawn rate and belt speed
-    float spawnRate = 1.0f;
+    float spawnRate = 3.0f;
     float speed = 250.0f;
+    float uSpeedCost = 10.0f;
+    float uSpawnRateCost = 25.0f;
 
     // Whether belt is running or not.
     bool running = false;
@@ -160,7 +162,10 @@ public:
      * @param multiplier The multitiplier to decrease the time by.
      * @return void.
      */
-    void upgradeSpawnRate(float multiplier) { spawnRate /= multiplier; }
+    void upgradeSpawnRate(float multiplier) {
+        spawnRate /= multiplier;
+        uSpawnRateCost *= upgradeCostMultiplier;
+    }
 
     /**
      * @brief Upgrades the belt speed
@@ -171,7 +176,10 @@ public:
      * @param multiplier The multitiplier to incease the speed by.
      * @return void.
      */
-    void upgradeSpeed(float multiplier) { speed *= multiplier; }
+    void upgradeSpeed(float multiplier) {
+        speed *= multiplier;
+        uSpeedCost *= upgradeCostMultiplier;
+    }
 
 private:
 

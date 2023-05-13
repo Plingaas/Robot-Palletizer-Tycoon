@@ -246,11 +246,7 @@ void Robot::runLogic() {
 }
 
 void Robot::upgradeSpeed(float rate) {
-    if (*money > upgradeCost) {
-        *money -= upgradeCost;
-        upgradeCost *= rate * rate;
-        speedMultiplier *= rate;
-        program.setR(1.0f / speedMultiplier);
-    }
-
+    upgradeCost *= upgradeCostMultiplier;
+    speedMultiplier *= rate;
+    program.setR(1.0f / speedMultiplier);
 }

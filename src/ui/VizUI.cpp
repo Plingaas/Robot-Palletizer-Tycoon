@@ -1,3 +1,4 @@
+#ifdef WIN32
 #include "ui/VizUI.hpp"
 
 using namespace threepp;
@@ -51,3 +52,4 @@ void VizUI::onRender() {
     mouseHovered = ImGui::IsWindowHovered();
     ImGui::End();
 }
+#endif

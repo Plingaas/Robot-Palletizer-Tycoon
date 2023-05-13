@@ -21,6 +21,7 @@ namespace AR2 {
 
     public:
 
+        inline static float *money = nullptr;
         // Its joints
         std::unique_ptr<Joint> j0;
         std::unique_ptr<Joint> j1;
@@ -32,7 +33,7 @@ namespace AR2 {
         std::unique_ptr<Joint> gripper;
 
         bool PIDActive = true;
-        inline static double *money = nullptr;
+
         std::shared_ptr<Scene> scene;
 
         // Its attached conveyor and pallet
@@ -46,6 +47,8 @@ namespace AR2 {
 
         bool isHolding = false;
         Item item;
+
+        float uSpeedCost = 10.0f;
 
         /**
          * @brief The Robot's constructor.

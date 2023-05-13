@@ -35,6 +35,7 @@ private:
 
     Raycaster raycaster;
     Vector2 mouse;
+    float money = 200.0f;
 
 protected:
 

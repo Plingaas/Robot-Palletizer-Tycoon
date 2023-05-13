@@ -1,3 +1,4 @@
+# Copied from threepp and removed what we were told to remove by Lars Ivar.
 name: Build
 
 on: [push, workflow_dispatch]

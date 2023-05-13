@@ -11,10 +11,11 @@ void Game::setupScene() {
     camera->up.set(0, 0, 1);
     camera->lookAt(0, 0, 0);
 
-    auto floor = BoxGeometry::create(5000, 5000, 0.1);
+    auto floor = BoxGeometry::create(5000, 5000, 100.0f);
     auto floor_material = MeshBasicMaterial::create();
     floor_material->color = 0x111111;
     auto floor_mesh = Mesh::create(floor, floor_material);
+    floor_mesh->position.z = -50.0f;
     scene->add(floor_mesh);
 
     {
@@ -70,15 +71,13 @@ void Game::runGame() {
 
     // ------------------------------------------------------------------
 
-    double MONEY = 200.0f;
-    AR2::Robot::money = &MONEY;
-
     renderer.enableTextRendering();
-    auto &textHandle = renderer.textHandle("Money " + std::to_string((int) MONEY));
+    auto &textHandle = renderer.textHandle("Money " + std::to_string((int) money));
     textHandle.setPosition(0, canvas.getSize().height - 30);
     textHandle.scale = 2;
 
     ui = std::make_unique<UpgradeUI>(canvas);
+    AR2::Robot::money = &money;
 
     canvas.onWindowResize([&](WindowSize size) {
         camera->aspect = size.getAspect();
@@ -100,7 +99,7 @@ void Game::runGame() {
         }
 
         renderer.render(scene, camera);
-        textHandle.setText("Money " + std::to_string((int) MONEY));
+        textHandle.setText("Money " + std::to_string((int) money));
 
         ui->render();
         controls.enabled = !ui->mouseHovered;
@@ -110,11 +109,19 @@ void Game::runGame() {
 
 void Game::addRobot(Vector3 pos) {
 
-    robots.insertAtTail(AR2::Robot::create());
-    robots.getTailValue()->moveBaseTo(pos);
-    scene->add(robots.getTailValue()->getMesh());
-    robots.getTailValue()->gripper->mesh->visible = false;
-    robots.getTailValue()->scene = scene;
+    auto newRobot = AR2::Robot::create();
+    newRobot->scene = scene;
+    newRobot->gripper->mesh->visible = false;
+    newRobot->moveBaseTo(pos);
+    scene->add(newRobot->getMesh());
+
+    ui->upgradeBeltSpeedCost = &newRobot->conveyor->uSpeedCost;
+    ui->upgradeSpawnRateCost = &newRobot->conveyor->uSpawnRateCost;
+    ui->upgradePalletRewardCost = &newRobot->pallet->uPalletRewardCost;
+    ui->upgradeRobotSpeedCost = &newRobot->uSpeedCost;
+
+    robots.insertAtTail(newRobot);
+
 }
 
 
@@ -126,8 +133,10 @@ std::shared_ptr<ConveyorBelt> Game::createConveyor() {
         auto conveyor = std::make_shared<ConveyorBelt>(100.0f, Vector3{world_pos.x, world_pos.y, 20.0f});
         scene->add(conveyor->conveyor);
         conveyor->scene_ = scene;
+
         return conveyor;
     }
+    else return nullptr;
 }
 
 std::shared_ptr<EuroPallet> Game::createPallet() {
@@ -142,6 +151,7 @@ std::shared_ptr<EuroPallet> Game::createPallet() {
 
         return pallet;
     }
+    else return nullptr;
 }
 
 void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener) {
@@ -161,16 +171,25 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
 
     if (keyListener->current == keyListener->n_ && mouseListener->LEFTCLICK) {
         if (robots.length() > 0 && !robots.getTailValue()->conveyor) {
-            robots.getTailValue()->attachConveyor(createConveyor());
-            keyListener->current = 0;
+
+            auto newConveyor = createConveyor();
+
+            if (newConveyor != nullptr) {
+                robots.getTailValue()->attachConveyor(newConveyor);
+                keyListener->current = 0;
+            }
         }
     }
     if (keyListener->current == keyListener->m_ && mouseListener->LEFTCLICK) {
         if (robots.length() > 0 && !robots.getTailValue()->pallet) {
-            robots.getTailValue()->attachPallet(createPallet());
-            keyListener->current = 0;
-        }
 
+            auto newPallet = createPallet();
+
+            if (newPallet != nullptr) {
+                robots.getTailValue()->attachPallet(newPallet);
+                keyListener->current = 0;
+            }
+        }
     }
 }
 
@@ -178,19 +197,32 @@ void Game::checkUpgrades() {
     if (robots.length() == 0 || robots.getHeadValue()->pallet == nullptr || robots.getHeadValue()->conveyor == nullptr)
         return;
     if (ui->upgradePalletReward) {
-        robots.getHeadValue()->pallet->upgradeDeliverValue(1.1);
+        if (money > robots.getTailValue()->pallet->uPalletRewardCost) {
+            money -= robots.getTailValue()->pallet->uPalletRewardCost;
+            robots.getHeadValue()->pallet->upgradePalletReward(1.1);
+        }
         ui->upgradePalletReward = false;
     }
     if (ui->upgradeSpawnRate) {
-        robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1);
+        if (money > robots.getTailValue()->conveyor->uSpawnRateCost) {
+            money -= robots.getTailValue()->conveyor->uSpawnRateCost;
+            robots.getHeadValue()->conveyor->upgradeSpawnRate(1.1);
+        }
         ui->upgradeSpawnRate = false;
     }
     if (ui->upgradeBeltSpeed) {
-        robots.getHeadValue()->conveyor->upgradeSpeed(1.1);
+        if (money > robots.getTailValue()->conveyor->uSpeedCost) {
+            money -= robots.getTailValue()->conveyor->uSpeedCost;
+            robots.getHeadValue()->conveyor->upgradeSpeed(1.1);
+        }
+
         ui->upgradeBeltSpeed = false;
     }
     if (ui->upgradeRobotSpeed) {
-        robots.getHeadValue()->upgradeSpeed(1.1);
+        if (money > robots.getTailValue()->uSpeedCost) {
+            money -= robots.getTailValue()->uSpeedCost;
+            robots.getHeadValue()->upgradeSpeed(1.1);
+        }
         ui->upgradeRobotSpeed = false;
     }
 }

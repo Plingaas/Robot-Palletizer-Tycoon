@@ -6,6 +6,9 @@
 
 using namespace threepp;
 
+// How much the cost is multiplied with when upgrading
+inline float upgradeCostMultiplier = 1.05f;
+
 /**
  * @brief Loads the geometry of an STL file.
  *

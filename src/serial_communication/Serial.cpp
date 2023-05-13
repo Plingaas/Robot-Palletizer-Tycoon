@@ -1,3 +1,4 @@
+#ifdef WIN32
 //
 // Code from https://github.com/manashmandal/SerialPort
 //
@@ -132,3 +133,4 @@ std::vector<std::string> Serial::availablePorts() {
 
     return ports;
 }
+#endif

@@ -1,10 +1,9 @@
-#define CATCH_CONFIG_MAIN
 #ifdef WIN32
+#define CATCH_CONFIG_MAIN
 #include "serial_communication/Device.hpp"
-
 #include <catch2/catch.hpp>
 
-TEST_CASE("Device Test") {
+TEST_CASE("Serial Connection Test") {
     std::vector<std::string> ports = Serial::availablePorts();
 
     const char* port = ports[0].c_str();

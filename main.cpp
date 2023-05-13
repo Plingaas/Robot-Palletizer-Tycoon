@@ -9,7 +9,7 @@ int main() {
     std::array<int, 3> serialData{};
 
     char* port = nullptr;
-    Device device;
+
 
     // Main application
     auto window = [&serialData, &port]()
@@ -33,7 +33,8 @@ int main() {
 
     std::thread app_thread(window);
 
-//#ifdef WIN32
+#ifdef WIN32
+    Device device;
     auto serial_comm = [&serialData, &port, &device]()
     {
 
@@ -70,3 +71,4 @@ int main() {
 
 
 }
+#endif

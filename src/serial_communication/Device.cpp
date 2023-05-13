@@ -1,3 +1,4 @@
+#ifdef WIN32
 /* HOW TO USE IN MAIN CODE
     std::vector<std::string> ports = Serial::availablePorts();
     const char* port = ports[0].c_str();
@@ -74,3 +75,4 @@ void Device::write(char _data[]) {
 bool Device::isConnected() {
     return device->isConnected();
 };
+#endif
