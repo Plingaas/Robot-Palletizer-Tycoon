@@ -9,12 +9,12 @@ AR2::Robot::Robot() {
     Color color1 = Color::lightcoral;
     Color color2 = Color::lightblue;
 
-    j0 = Joint::create(j0_geo, color1, z, false, {0, 0, 0});
-    j1 = Joint::create(j1_geo, color2, y, true, {0, 0, 87.12});
+    j0 = Joint::create(j0_geo, color1);
+    j1 = Joint::create(j1_geo, color2, z, false, {0, 0, 87.12});
     j2 = Joint::create(j2_geo, color2, y, true, {64.2, 51.4, 82.65});
-    j3 = Joint::create(j3_geo, color1, x, true, {305, -51.4, 0});
-    j4 = Joint::create(j4_geo, color1, y, true, {222.63, 0, 0});
-    j5 = Joint::create(j5_geo, color2, y, true, {0, 0, 0});
+    j3 = Joint::create(j3_geo, color1, y, true, {305, -51.4, 0});
+    j4 = Joint::create(j4_geo, color1, x, true, {222.63, 0, 0});
+    j5 = Joint::create(j5_geo, color2, y, true);
     j6 = Joint::create(j6_geo, color2, x, true, {36.25, 0, 0});
     gripper = Joint::create(gripper_geo, color2, z, false, {64, 0, 0});
 
