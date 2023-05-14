@@ -2,14 +2,20 @@
 
 using namespace AR2;
 
-
-Joint::Joint(std::shared_ptr<BufferGeometry> &geometry, Color color) {
+Joint::Joint(std::shared_ptr<BufferGeometry> &geometry,
+             Color color,
+             Axis rotationAxis,
+             bool reverseRotation,
+             Vector3 position) {
 
     auto material = MeshPhongMaterial::create();
     material->color = color;
 
     mesh = Mesh::create(geometry, material);
     mesh->castShadow = true;
+    setRotationAxis(rotationAxis);
+    setReverseRotation(reverseRotation);
+    setPosition(position);
 };
 
 void Joint::setRotationAxis(Axis axis) {

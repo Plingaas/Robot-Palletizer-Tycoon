@@ -9,14 +9,14 @@ AR2::Robot::Robot() {
     Color color1 = Color::lightcoral;
     Color color2 = Color::lightblue;
 
-    j0 = Joint::create(j0_geo, color1);
-    j1 = Joint::create(j1_geo, color2);
-    j2 = Joint::create(j2_geo, color2);
-    j3 = Joint::create(j3_geo, color1);
-    j4 = Joint::create(j4_geo, color1);
-    j5 = Joint::create(j5_geo, color2);
-    j6 = Joint::create(j6_geo, color2);
-    gripper = Joint::create(gripper_geo, color2);
+    j0 = Joint::create(j0_geo, color1, z, false, {0, 0, 0});
+    j1 = Joint::create(j1_geo, color2, y, true, {0, 0, 87.12});
+    j2 = Joint::create(j2_geo, color2, y, true, {64.2, 51.4, 82.65});
+    j3 = Joint::create(j3_geo, color1, x, true, {305, -51.4, 0});
+    j4 = Joint::create(j4_geo, color1, y, true, {222.63, 0, 0});
+    j5 = Joint::create(j5_geo, color2, y, true, {0, 0, 0});
+    j6 = Joint::create(j6_geo, color2, x, true, {36.25, 0, 0});
+    gripper = Joint::create(gripper_geo, color2, z, false, {64, 0, 0});
 
     j2_logo = Joint::create(j2_logo_geo, color1);
     j4_logo = Joint::create(j4_logo_geo, color2);
@@ -24,38 +24,6 @@ AR2::Robot::Robot() {
     // Attach logo
     j2->mesh->add(j2_logo->mesh);
     j4->mesh->add(j4_logo->mesh);
-
-    j1->setRotationAxis(z);
-    j2->setRotationAxis(y);
-    j3->setRotationAxis(y);
-    j4->setRotationAxis(x);
-    j5->setRotationAxis(y);
-    j6->setRotationAxis(x);
-
-    j1->setReverseRotation(false);
-    j2->setReverseRotation(true);
-    j3->setReverseRotation(true);
-    j4->setReverseRotation(true);
-    j5->setReverseRotation(true);
-    j6->setReverseRotation(true);
-
-    Vector3 j0_offset{0, 0, 0};
-    Vector3 j1_offset{0, 0, 87.12};
-    Vector3 j2_offset{64.2, 51.4, 82.65};
-    Vector3 j3_offset{305, -51.4, 0};
-    Vector3 j4_offset{222.63, 0, 0};
-    Vector3 j5_offset{0, 0, 0};
-    Vector3 j6_offset{36.25, 0, 0};
-    Vector3 gripper_offset{64, 0, 0};
-
-    j0->setPosition(j0_offset);
-    j1->setPosition(j1_offset);
-    j2->setPosition(j2_offset);
-    j3->setPosition(j3_offset);
-    j4->setPosition(j4_offset);
-    j5->setPosition(j5_offset);
-    j6->setPosition(j6_offset);
-    gripper->setPosition(gripper_offset);
 
     // Create links between joints by using parents
     j6->mesh->add(gripper->mesh);

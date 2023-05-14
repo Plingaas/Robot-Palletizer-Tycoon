@@ -38,8 +38,16 @@ namespace AR2 {
          *
          * @param geometry Its geometry.
          * @param color Its mesh's color.
+         * @param rotationAxis The axis to rotate around.
+         * @param reverseRotation Whether rotation should be reverse or not.
+         * @param position The Joint's starting position.
          */
-        explicit Joint(std::shared_ptr<BufferGeometry> &geometry, Color color);
+        explicit Joint(std::shared_ptr<BufferGeometry> &geometry,
+                       Color color,
+                       Axis rotationAxis,
+                       bool reverseRotation,
+                       Vector3 position
+                       );
 
         /**
          * @brief Creates a new joint.
@@ -47,12 +55,19 @@ namespace AR2 {
          * This static function creates a new joint given its
          * geometry and color.
          *
-         * @param geometry The geometry of the joint.
-         * @param color The color of its mesh.
+         * @param geometry Its geometry.
+         * @param color Its mesh's color.
+         * @param rotationAxis The axis to rotate around.
+         * @param reverseRotation Whether rotation should be reverse or not.
+         * @param position The Joint's starting position.
          * @return Returns a std::unique_ptr<Joint> for the newly created Joint.
          */
-        static std::unique_ptr<Joint> create(std::shared_ptr<BufferGeometry> &geometry, Color color) {
-            return std::make_unique<Joint>(geometry, color);
+        static std::unique_ptr<Joint> create(std::shared_ptr<BufferGeometry> &geometry, Color color,
+                                             Axis rotationAxis = z,
+                                             bool reverseRotation = false,
+                                             Vector3 position = {0.0f, 0.0f, 0.0f}
+                                             ) {
+            return std::make_unique<Joint>(geometry, color, rotationAxis, reverseRotation, position);
         }
 
         /**
