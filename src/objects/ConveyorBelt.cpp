@@ -5,6 +5,10 @@ ConveyorBelt::ConveyorBelt(float leg_height, Vector3 pos) {
     bodyMesh = meshFromSTL(bodySTLPath, 0x333333);
     beltMesh = meshFromSTL(beltSTLPath, Color::silver);
 
+    legMesh->castShadow = true;
+    bodyMesh->castShadow = true;
+    beltMesh->receiveShadow = true;
+
     legMesh->position.setZ(-leg_height);
 
     conveyor = Group::create();

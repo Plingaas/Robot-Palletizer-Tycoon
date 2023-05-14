@@ -73,7 +73,7 @@ public:
      *
      * @return void.
      */
-    void generateSequence(Vector3 pos, bool drop, float z_offset = 50.0f);
+    void generateSequence(Vector3 pos, bool drop, float z_offset = 75.0f);
 
     /**
      * @brief Sets the resting position of the robot.

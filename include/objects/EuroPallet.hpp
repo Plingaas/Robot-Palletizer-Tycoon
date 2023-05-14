@@ -31,8 +31,10 @@ public:
     explicit EuroPallet(Vector3 pos = {0.0f, 0.0f, 0.0f}) {
 
         auto material = MeshPhongMaterial::create();
-        material->color = Color::silver;
+        material->color = 0xF5DCA6;
         mesh = Mesh::create(geometry, material);
+        mesh->receiveShadow = true;
+        mesh->castShadow = true;
         setPosition(pos);
     };
 

@@ -9,6 +9,7 @@ Joint::Joint(std::shared_ptr<BufferGeometry> &geometry, Color color) {
     material->color = color;
 
     mesh = Mesh::create(geometry, material);
+    mesh->castShadow = true;
 };
 
 void Joint::setRotationAxis(Axis axis) {

@@ -1,87 +1,79 @@
-//
-// Created by peter on 2/21/2023.
-//
 #include "Game.hpp"
 
+Game::Game() :
+    canvas(Canvas::Parameters()
+                   .size({1280, 720})
+                   .antialiasing(16)
+                   .title("Robot Palletizer Tycoon")),
+    renderer(canvas),
+    camera(std::make_shared<PerspectiveCamera>(70, canvas.getAspect(), 0.1f, 6000)),
+    controls(camera, canvas),
+    keyListener(t1),
+    mouseListener(t2)
+{
+    renderer.enableTextRendering();
+    renderer.shadowMap().enabled = true;
+    renderer.shadowMap().type = PCFSoftShadowMap;
+    renderer.setClearColor(Color::aliceblue);
 
-void Game::setupScene() {
-
-    scene = Scene::create();
     camera->position.set(700, -1000, 500);
     camera->up.set(0, 0, 1);
     camera->lookAt(0, 0, 0);
+    controls.enableKeys = false;
 
+    ui = std::make_unique<UpgradeUI>(canvas);
+    AR2::Robot::money = &money;
+    setupScene();
+    setupListeners();
+}
+
+void Game::setupListeners() {
+
+    canvas.addKeyListener(&keyListener);
+    canvas.addMouseListener(&mouseListener);
+
+    // Mouse Ray
+    mouse = {-Infinity<float>, -Infinity<float>};
+
+    l = std::make_unique<MouseMoveListener>([&](Vector2 pos) {
+        auto size = canvas.getSize();
+        mouse.x = (pos.x / static_cast<float>(size.width)) * 2 - 1;
+        mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
+    });
+
+    canvas.addMouseListener(l.get());
+}
+
+void Game::setupScene() {
+    scene = Scene::create();
     auto floor = BoxGeometry::create(5000, 5000, 100.0f);
-    auto floor_material = MeshBasicMaterial::create();
-    floor_material->color = 0x111111;
+    auto floor_material = MeshPhongMaterial::create();
+    auto texture = loadTexture("bin/data/textures/concrete.png");
+    texture->wrapT = RepeatWrapping;
+    texture->wrapS = RepeatWrapping;
+    texture->repeat = {5, 5};
+    floor_material->map = texture;
     auto floor_mesh = Mesh::create(floor, floor_material);
     floor_mesh->position.z = -50.0f;
+    floor_mesh->receiveShadow = true;
     scene->add(floor_mesh);
 
-    {
-        auto light = DirectionalLight::create(0xffffff, 0.4f);
-        light->position.set(1000, 1000, 1000);
-        scene->add(light);
-    }
-    {
-        auto light = DirectionalLight::create(0xffffff, 0.4f);
-        light->position.set(-1000, -1000, 1000);
-        scene->add(light);
-    }
-    {
-        auto light = AmbientLight::create(0xffffff, 0.6f);
-        scene->add(light);
-    }
+    auto spotLight = SpotLight::create(0xffffff, 0.7f);
+    spotLight->distance = 10000;
+    spotLight->position.set(1000, 1000, 4000);
+    spotLight->castShadow = true;
+    spotLight->shadow->mapSize.set(2048, 2048);
+    scene->add(spotLight);
+    scene->add(AmbientLight::create(0xffffff, 0.4f));
 
     raycaster = Raycaster{};
 }
 
 void Game::runGame() {
 
-    Canvas canvas(Canvas::Parameters()
-                        .size({1280, 720})
-                        .antialiasing(8)
-                        .title("Robot Palletizer Tycoon")
-    );
-    GLRenderer renderer(canvas);
-    renderer.setClearColor(Color::aliceblue);
-
-    camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
-    OrbitControls controls{camera, canvas};
-    controls.enableKeys = false;
-
-    setupScene();
-
-    // ------------------------ Code from threepp examples
-    // Key Listener
-    KListener keyListener(t1);
-    canvas.addKeyListener(&keyListener);
-
-    // Mouse Listener
-    MListener mouseListener(t2);
-    canvas.addMouseListener(&mouseListener);
-
-    // Mouse Ray
-    mouse = {-Infinity<float>, -Infinity<float>};
-
-    MouseMoveListener l([&](Vector2 pos) {
-
-        auto size = canvas.getSize();
-        mouse.x = (pos.x / static_cast<float>(size.width)) * 2 - 1;
-        mouse.y = -(pos.y / static_cast<float>(size.height)) * 2 + 1;
-    });
-
-    canvas.addMouseListener(&l);
-
-    // ------------------------------------------------------------------
-
-    renderer.enableTextRendering();
     auto &textHandle = renderer.textHandle("Money " + std::to_string((int) money));
-    textHandle.setPosition(0, canvas.getSize().height - 30);
+    textHandle.setPosition(5, canvas.getSize().height - 25);
     textHandle.scale = 2;
-
-    ui = std::make_unique<UpgradeUI>(canvas);
-    AR2::Robot::money = &money;
 
     canvas.onWindowResize([&](WindowSize size) {
         camera->aspect = size.getAspect();
@@ -104,14 +96,13 @@ void Game::runGame() {
 
         renderer.render(scene, camera);
         textHandle.setText("Money " + std::to_string((int) money));
-
         ui->render();
         controls.enabled = !ui->mouseHovered;
 
     });
 }
 
-void Game::addRobot(Vector3 pos) {
+void Game::createRobot(Vector3 pos) {
 
     auto newRobot = AR2::Robot::create();
     newRobot->scene = scene;
@@ -125,38 +116,25 @@ void Game::addRobot(Vector3 pos) {
 
 }
 
-std::shared_ptr<ConveyorBelt> Game::createConveyor() {
-    raycaster.setFromCamera(mouse, camera);
-    auto intersects = raycaster.intersectObjects(scene->children);
-    if (!intersects.empty()) {
-        Vector3 world_pos = intersects.front().point;
-        auto conveyor = std::make_shared<ConveyorBelt>(100.0f, Vector3{world_pos.x, world_pos.y, 20.0f});
-        scene->add(conveyor->conveyor);
-        conveyor->scene_ = scene;
+void Game::createConveyor(Vector3 pos) {
 
-        ui->upgradeBeltSpeedCost = &conveyor->uSpeedCost;
-        ui->upgradeSpawnRateCost = &conveyor->uSpawnRateCost;
+    auto conveyor = std::make_shared<ConveyorBelt>(100.0f, Vector3{pos.x, pos.y, 20.0f});
+    scene->add(conveyor->conveyor);
+    conveyor->scene_ = scene;
+    robots.getTailValue()->attachConveyor(conveyor);
 
-        return conveyor;
-    }
-    else return nullptr;
+    ui->upgradeBeltSpeedCost = &conveyor->uSpeedCost;
+    ui->upgradeSpawnRateCost = &conveyor->uSpawnRateCost;
 }
 
-std::shared_ptr<EuroPallet> Game::createPallet() {
-    raycaster.setFromCamera(mouse, camera);
-    auto intersects = raycaster.intersectObjects(scene->children);
-    if (!intersects.empty()) {
+void Game::createPallet(Vector3 pos) {
 
-        Vector3 world_pos = intersects.front().point;
-        auto pallet = std::make_shared<EuroPallet>();
-        pallet->setPosition(world_pos.x + 180.0f, world_pos.y, 0.0f);
-        scene->add(pallet->mesh);
+    auto pallet = std::make_shared<EuroPallet>();
+    pallet->setPosition(pos.x + 180.0f, pos.y, 0.0f);
+    scene->add(pallet->mesh);
+    robots.getTailValue()->attachPallet(pallet);
 
-        ui->upgradePalletRewardCost = &pallet->uPalletRewardCost;
-
-        return pallet;
-    }
-    else return nullptr;
+    ui->upgradePalletRewardCost = &pallet->uPalletRewardCost;
 }
 
 void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener) {
@@ -168,7 +146,7 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
             auto intersects = raycaster.intersectObjects(scene->children);
             if (!intersects.empty()) {
                 Vector3 worldPos = intersects.front().point;
-                addRobot(worldPos);
+                createRobot(worldPos);
                 keyListener->current = 0;
             }
         }
@@ -177,21 +155,22 @@ void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener
     if (keyListener->current == keyListener->n_ && mouseListener->LEFTCLICK) {
         if (robots.length() > 0 && !robots.getTailValue()->conveyor) {
 
-            auto newConveyor = createConveyor();
-
-            if (newConveyor != nullptr) {
-                robots.getTailValue()->attachConveyor(newConveyor);
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                createConveyor(intersects.front().point);
                 keyListener->current = 0;
             }
+
         }
     }
     if (keyListener->current == keyListener->m_ && mouseListener->LEFTCLICK) {
         if (robots.length() > 0 && !robots.getTailValue()->pallet) {
 
-            auto newPallet = createPallet();
-
-            if (newPallet != nullptr) {
-                robots.getTailValue()->attachPallet(newPallet);
+            raycaster.setFromCamera(mouse, camera);
+            auto intersects = raycaster.intersectObjects(scene->children);
+            if (!intersects.empty()) {
+                createPallet(intersects.front().point);
                 keyListener->current = 0;
             }
         }

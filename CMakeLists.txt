@@ -21,5 +21,6 @@ file(GLOB_RECURSE SOURCES "src/*.cpp")
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 file(COPY "${CMAKE_SOURCE_DIR}/resources/models" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data)
-add_executable(game ${SOURCES} main.cpp include/objects/items/EmeraldBlock.hpp include/objects/items/IronBlock.hpp include/objects/items/GoldBlock.hpp include/objects/items/ItemGenerator.hpp)
+file(COPY "${CMAKE_SOURCE_DIR}/resources/textures" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/data)
+add_executable(game ${SOURCES} main.cpp)
 target_link_libraries(game PRIVATE threepp::threepp imgui::imgui)

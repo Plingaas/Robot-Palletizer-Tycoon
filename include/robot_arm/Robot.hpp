@@ -32,6 +32,9 @@ namespace AR2 {
         std::unique_ptr<Joint> j6;
         std::unique_ptr<Joint> gripper;
 
+        std::unique_ptr<Joint> j2_logo;
+        std::unique_ptr<Joint> j4_logo;
+
         bool PIDActive = true;
 
         std::shared_ptr<Scene> scene;

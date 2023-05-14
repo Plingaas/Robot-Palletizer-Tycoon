@@ -6,13 +6,7 @@ class GoldBlock : public Item {
 
 public:
     inline static float value = 10.0f;
-
-    GoldBlock() {
-        auto material = MeshPhongMaterial::create();
-        material->map = loadTexture("bin/data/textures/gold_block.png");
-
-        mesh = Mesh::create(geometry, material);
-    };
+    GoldBlock() : Item("bin/data/textures/gold_block.png"){};
     [[nodiscard]] float getValue() const override { return value; };
 
 };

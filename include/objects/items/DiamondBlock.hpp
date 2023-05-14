@@ -7,13 +7,7 @@ class DiamondBlock : public Item {
 
 public:
     inline static float value = 30.0f;
-
-    DiamondBlock() {
-        auto material = MeshPhongMaterial::create();
-        material->map = loadTexture("bin/data/textures/diamond_block.png");
-
-        mesh = Mesh::create(geometry, material);
-    };
+    DiamondBlock() : Item("bin/data/textures/diamond_block.png"){};
     [[nodiscard]] float getValue() const override { return value; };
 
 };

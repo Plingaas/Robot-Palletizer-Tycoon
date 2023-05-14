@@ -8,29 +8,39 @@ void Visualization::setupScene() {
 
     scene = Scene::create();
     // Floor
-    auto floor1 = CylinderGeometry::create(750, 750, 1, 100, 1);
-    auto floorMaterial1 = MeshBasicMaterial::create();
-    floorMaterial1->color = 0x333333;
-    auto floorMesh1 = Mesh::create(floor1, floorMaterial1);
-    floorMesh1->rotateX(math::PI*0.5f);
+    auto floorGeometry = CylinderGeometry::create(750, 750, 1, 100, 1);
+    auto floorMaterial = MeshPhongMaterial::create();
+    floorMaterial->map = loadTexture("bin/data/textures/concrete.png");
 
-    // Floor
-    auto floor2 = CylinderGeometry::create(750, 750, 1, 100, 1);
-    auto floorMaterial2 = MeshBasicMaterial::create();
-    floorMaterial2->color = 0x333333;
-    auto floorMesh2 = Mesh::create(floor2, floorMaterial2);
+    auto floorMesh1 = Mesh::create(floorGeometry, floorMaterial);
+    floorMesh1->rotateX(math::PI*0.5f);
+    floorMesh1->receiveShadow = true;
+
+    auto floorMesh2 = Mesh::create(floorGeometry, floorMaterial);
     floorMesh2->rotateX(math::PI*0.5f);
     floorMesh2->position.set(0.0f, 2000.0f, 0.0f);
+    floorMesh2->receiveShadow = true;
 
     scene->add(floorMesh1);
     scene->add(floorMesh2);
 
     // Lighting
-    auto light1 = DirectionalLight::create(0xffffff, 0.4f);
-    light1->position.set(1000, 1000, 1000);
-    scene->add(light1);
-    auto light2 = AmbientLight::create(0xffffff, 0.6f);
-    scene->add(light2);
+    auto spotLight1 = SpotLight::create(0xffffff, 0.7f);
+    spotLight1->distance = 5000;
+    spotLight1->position.set(1000, 1000, 3000);
+    spotLight1->castShadow = true;
+    spotLight1->shadow->mapSize.set(2048, 2048);
+    scene->add(spotLight1);
+
+    auto spotLight2 = SpotLight::create(0xffffff, 0.7f);
+    spotLight2->distance = 5000;
+    spotLight2->position.set(1000, 1000, 3000);
+    spotLight2->castShadow = true;
+    spotLight2->shadow->mapSize.set(2048, 2048);
+    spotLight2->target = floorMesh2;
+
+    scene->add(spotLight2);
+    scene->add(AmbientLight::create(0xffffff, 0.3f));
 
     // Add text above robots
     auto textViz = meshFromSTL("bin/data/models/visualize_text.stl", Color::yellow);
@@ -51,6 +61,8 @@ void Visualization::runVisualization(const std::array<int, 3> &serialData, char 
     Canvas canvas(Canvas::Parameters().size({1280, 720}).antialiasing(8));
     GLRenderer renderer(canvas);
     renderer.setClearColor(Color::black);
+    renderer.shadowMap().enabled = true;
+    renderer.shadowMap().type = PCFSoftShadowMap;
 
     // Setup camera
     camera = PerspectiveCamera::create(90, canvas.getAspect(), 0.1f, 5000);
@@ -100,7 +112,6 @@ void Visualization::runVisualization(const std::array<int, 3> &serialData, char 
             robotControl->setTarget(target->position.add(Vector3{0.0f, 0.0f, 52.66f})); // Add gripper length, no time for better fix.
             ui->moveButtonClicked = false;
         }
-
 
         *port = ui->currentPort;
         robotViz->goToSteps(serialData);

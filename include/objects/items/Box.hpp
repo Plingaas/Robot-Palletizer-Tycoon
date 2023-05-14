@@ -26,12 +26,14 @@ public:
      *
      * @param color The color of the box.
      */
-    explicit Box() {
+    explicit Box(const std::string &path = "", bool receiveShadow = false, bool castShadow = false) : Item(path, receiveShadow, castShadow) {
         auto color = math::randomInRange(0x555555, 0xffffff);
         auto mat = MeshPhongMaterial::create();
         mat->color = color;
 
         mesh = Mesh::create(geometry, mat);
+        mesh->castShadow = true;
+        mesh->receiveShadow = true;
     };
 
     /**

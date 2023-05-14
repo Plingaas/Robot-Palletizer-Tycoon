@@ -8,6 +8,8 @@
 #include "serial_communication/Serial.hpp"
 #include "ui/VizUI.hpp"
 #include "robot_arm/Robot.hpp"
+#include "threepp/helpers/SpotLightHelper.hpp"
+#include "threepp/lights/LightShadow.hpp"
 
 using namespace threepp;
 

@@ -9,12 +9,16 @@ namespace AR2 {
     // Geometries of all the different parts of the robot.
     static std::shared_ptr<BufferGeometry> j0_geo = loadSTL("bin/data/models/j0_simplified.stl");
     static std::shared_ptr<BufferGeometry> j1_geo = loadSTL("bin/data/models/j1_very_simplified.stl");
-    static std::shared_ptr<BufferGeometry> j2_geo = loadSTL("bin/data/models/j2_very_simplified.stl");
+    static std::shared_ptr<BufferGeometry> j2_geo = loadSTL("bin/data/models/j2_very_simplified2.stl");
     static std::shared_ptr<BufferGeometry> j3_geo = loadSTL("bin/data/models/j3_very_simplified.stl");
     static std::shared_ptr<BufferGeometry> j4_geo = loadSTL("bin/data/models/j4_very_simplified.stl");
     static std::shared_ptr<BufferGeometry> j5_geo = loadSTL("bin/data/models/j5_very_simplified.stl");
     static std::shared_ptr<BufferGeometry> j6_geo = loadSTL("bin/data/models/j6_simplified.stl");
     static std::shared_ptr<BufferGeometry> gripper_geo = loadSTL("bin/data/models/servo_gripper_simplified.stl");
+
+    // Logos
+    static std::shared_ptr<BufferGeometry> j2_logo_geo = loadSTL("bin/data/models/j2_very_simplified_logo.stl");
+    static std::shared_ptr<BufferGeometry> j4_logo_geo = loadSTL("bin/data/models/j4_very_simplified_logo.stl");
 
     /**
      * @brief A class for a robot joint.

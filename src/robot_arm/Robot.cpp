@@ -6,14 +6,24 @@ using namespace AR2;
 
 AR2::Robot::Robot() {
 
-    j0 = Joint::create(j0_geo, Color::pink);
-    j1 = Joint::create(j1_geo, Color::purple);
-    j2 = Joint::create(j2_geo, Color::pink);
-    j3 = Joint::create(j3_geo, Color::purple);
-    j4 = Joint::create(j4_geo, Color::pink);
-    j5 = Joint::create(j5_geo, Color::purple);
-    j6 = Joint::create(j6_geo, Color::pink);
-    gripper = Joint::create(gripper_geo, Color::white);
+    Color color1 = Color::lightcoral;
+    Color color2 = Color::lightblue;
+
+    j0 = Joint::create(j0_geo, color1);
+    j1 = Joint::create(j1_geo, color2);
+    j2 = Joint::create(j2_geo, color2);
+    j3 = Joint::create(j3_geo, color1);
+    j4 = Joint::create(j4_geo, color1);
+    j5 = Joint::create(j5_geo, color2);
+    j6 = Joint::create(j6_geo, color2);
+    gripper = Joint::create(gripper_geo, color2);
+
+    j2_logo = Joint::create(j2_logo_geo, color1);
+    j4_logo = Joint::create(j4_logo_geo, color2);
+
+    // Attach logo
+    j2->mesh->add(j2_logo->mesh);
+    j4->mesh->add(j4_logo->mesh);
 
     j1->setRotationAxis(z);
     j2->setRotationAxis(y);
@@ -145,11 +155,11 @@ void Robot::setPIDParameters(float kp, float ti, float td) {
 
 void Robot::setColors(Color color1, Color color2) {
     changeMeshColor(j0->mesh, color1);
-    changeMeshColor(j1->mesh, color2);
-    changeMeshColor(j2->mesh, color1);
+    changeMeshColor(j1->mesh, color1);
+    changeMeshColor(j2->mesh, color2);
     changeMeshColor(j3->mesh, color2);
-    changeMeshColor(j4->mesh, color1);
-    changeMeshColor(j5->mesh, color2);
+    changeMeshColor(j4->mesh, color2);
+    changeMeshColor(j5->mesh, color1);
     changeMeshColor(j6->mesh, color1);
     changeMeshColor(gripper->mesh, color2);
 }

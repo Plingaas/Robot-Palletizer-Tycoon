@@ -12,6 +12,8 @@
 #include "helpers/LinkedList.hpp"
 #include "objects/ConveyorBelt.hpp"
 #include "objects/EuroPallet.hpp"
+#include "threepp/helpers/SpotLightHelper.hpp"
+#include "threepp/lights/LightShadow.hpp"
 
 using namespace threepp;
 
@@ -25,17 +27,25 @@ class Game {
 
 private:
 
+    Canvas canvas;
+    GLRenderer renderer;
     std::shared_ptr<PerspectiveCamera> camera;
     std::shared_ptr<Scene> scene;
     std::unique_ptr<UpgradeUI> ui;
+    OrbitControls controls;
 
     // For listeners
     float t1 = 0;
     float t2 = 0;
 
-    Raycaster raycaster;
+    KListener keyListener;
+    MListener mouseListener;
     Vector2 mouse;
-    float money = 200.0f;
+    std::unique_ptr<MouseMoveListener> l;
+
+    Raycaster raycaster;
+
+    float money = 2000.0f;
 
 protected:
 
@@ -46,7 +56,7 @@ public:
     /**
      * @brief The Game's constructor.
      */
-    Game(){};
+    Game();
 
     /**
      * @brief Sets up the scene
@@ -57,7 +67,14 @@ public:
      */
     void setupScene();
 
-    void setupListeners(Canvas *canvas);
+    /**
+     * @brief Sets up the listeners
+     *
+     * Adds mouse and keyboard listeners
+     *
+     * @return void.
+     */
+    void setupListeners();
 
     /**
      * @brief Starts the game.
@@ -75,7 +92,7 @@ public:
      * @param pos Position to place the robot.
      * @return void.
      */
-    void addRobot(Vector3 pos = {0.0f, 0.0f, 0.0f});
+    void createRobot(Vector3 pos = {0.0f, 0.0f, 0.0f});
 
     /**
      * @brief Creates a conveyor belt for the robot.
@@ -84,9 +101,11 @@ public:
      * If the robot already has a conveyor, the function will return
      * without doing anything.
      *
+     * @param pos The position to be set.
+     *
      * @return Returns a std::shared_ptr<ConveyorBelt> for the newly created conveyor belt.
      */
-    std::shared_ptr<ConveyorBelt> createConveyor();
+    void createConveyor(Vector3 pos = {0.0f, 0.0f, 0.0f});
 
     /**
      * @brief Creates a pallet for the robot.
@@ -95,9 +114,11 @@ public:
      * If the robot already has a pallet, the function will return
      * without doing anything.
      *
+     * @param pos The position to be set.
+     *
      * @return Returns a std::shared_ptr<EuroPallet> for the newly created pallet.
      */
-    std::shared_ptr<EuroPallet> createPallet();
+    void createPallet(Vector3 pos = {0.0f, 0.0f, 0.0f});
 
     /**
      * @brief Looks for actions to respond to user input.
@@ -113,6 +134,16 @@ public:
      */
     void checkListenerActions(KListener* keyListener, MListener* mouseListener);
 
+    /**
+     * @brief Checks if user has tried to upgrade
+     *
+     * Checks the UpgradeUI object to see if there
+     * are any UI-buttons pressed. If there is a pressed
+     * button it will try to upgrade whatever the user
+     * tried to.
+     *
+     * @return void.
+     */
     void checkUpgrades();
 
 };

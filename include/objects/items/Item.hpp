@@ -46,6 +46,27 @@ public:
     std::shared_ptr<Mesh> mesh;
 
     /**
+     * @brief
+     * @param path Path to a .png texture file.
+     * @param _receiveShadow If the item should receive shadows.
+     * @param _castShadow If the item should cast shadows.
+     *
+     * @note Using receiveShadow as well as castShadow can cause artifacts.
+     */
+    explicit Item(const std::string &path, bool _receiveShadow = true, bool _castShadow = true) {
+
+        auto material = MeshPhongMaterial::create();
+        if (!path.empty()) {
+            material->map = loadTexture(path);
+        } else {
+            material->color = Color::white;
+        }
+        mesh = Mesh::create(geometry, material);
+        mesh->castShadow = _castShadow;
+        mesh->receiveShadow = _receiveShadow;
+    }
+
+    /**
      * @brief Sets the color of the item.
      *
      * Uses the helper function changeMeshColor to set
