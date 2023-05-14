@@ -11,6 +11,11 @@ struct VizUI : imgui_context {
 
 public:
 
+    Vector3 pos;
+    bool moveButtonClicked;
+
+    bool mouseHovered = false;
+
     /**
      * @brief Constructor for the VizUI.
      *
@@ -19,11 +24,6 @@ public:
      * @return void.
      */
     explicit VizUI(const Canvas &canvas) : imgui_context(canvas.window_ptr()) {};
-
-    Vector3 pos;
-    bool moveButtonClicked;
-
-    bool mouseHovered = false;
 
     /**
      * @brief The update loop.

@@ -104,7 +104,7 @@ public:
      * @return A float with the value of the remaining distance.
      *
      */
-    float toMove() {
+    [[nodiscard]] float toMove() const {
         return maxMove - hasMoved;
     }
 

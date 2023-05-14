@@ -2,7 +2,6 @@
 #define ROBOTCONTROLLER_PROGRAM_HPP
 
 #include "threepp/threepp.hpp"
-#include "objects/items/Box.hpp"
 
 using namespace threepp;
 

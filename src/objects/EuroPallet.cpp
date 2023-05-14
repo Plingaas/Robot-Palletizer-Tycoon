@@ -1,6 +1,6 @@
 #include "objects/EuroPallet.hpp"
 
-Vector3 EuroPallet::nextPosition(const std::shared_ptr<Item> &item) {
+Vector3 EuroPallet::nextPosition(const std::shared_ptr<Item> &item) const {
     Vector3 offset = {item->size.x, item->size.y, item->size.z};
     offset.multiplyScalar(0.5f);
 

@@ -14,7 +14,6 @@
 #include "objects/EuroPallet.hpp"
 #include "threepp/helpers/SpotLightHelper.hpp"
 #include "threepp/lights/LightShadow.hpp"
-
 using namespace threepp;
 
 /**
@@ -86,6 +85,27 @@ public:
      * @return void.
      */
     void runGame();
+
+    /**
+     * @brief Calls every update function.
+     * @param dt How much time the last frame took.
+     */
+    void updateGame(float dt);
+
+    /**
+     * @brief Updates all the robots.
+     *
+     * @param dt How much time the last frame took.
+     */
+    void updateRobots(float dt);
+
+    /**
+     * @brief Casts a ray and returns intersections.
+     *
+     * @return Returns std::vector<Intersection>.
+     */
+    std::vector<Intersection> castRay();
+
     /**
      * @brief Adds a robot to the back of the list.
      *
@@ -132,7 +152,7 @@ public:
      *
      * @return void.
      */
-    void checkListenerActions(KListener* keyListener, MListener* mouseListener);
+    void checkListenerActions();
 
     /**
      * @brief Checks if user has tried to upgrade

@@ -58,7 +58,6 @@ void ConveyorBelt::addItem() {
     if (running)
         return;
 
-
     std::shared_ptr<Item> block = ItemGenerator::generateRandomItem();
     block->mesh->position = conveyor->position + startOffset;
     block->mesh->position.z += block->size.z * 0.5f;

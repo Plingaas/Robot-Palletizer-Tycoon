@@ -16,7 +16,7 @@ Game::Game() :
     renderer.shadowMap().type = PCFSoftShadowMap;
     renderer.setClearColor(Color::aliceblue);
 
-    camera->position.set(700, -1000, 500);
+    camera->position.set(1000, 1000, 500);
     camera->up.set(0, 0, 1);
     camera->lookAt(0, 0, 0);
     controls.enableKeys = false;
@@ -79,27 +79,31 @@ void Game::runGame() {
         camera->aspect = size.getAspect();
         camera->updateProjectionMatrix();
         renderer.setSize(size);
-        textHandle.setPosition(0, canvas.getSize().height - 30);
+        textHandle.setPosition(5, size.height - 30);
     });
 
     canvas.animate([&](float dt) {
 
-        checkListenerActions(&keyListener, &mouseListener);
-        checkUpgrades();
-
-        // Update all robots
-        auto node = robots.getHead();
-        while (node != nullptr) {
-            node->value->update(dt);
-            node = node->next;
-        }
-
+        updateGame(dt);
         renderer.render(scene, camera);
         textHandle.setText("Money " + std::to_string((int) money));
         ui->render();
         controls.enabled = !ui->mouseHovered;
-
     });
+}
+
+void Game::updateGame(float dt) {
+    checkListenerActions();
+    checkUpgrades();
+    updateRobots(dt);
+}
+
+void Game::updateRobots(float dt) {
+    auto node = robots.getHead();
+    while (node != nullptr) {
+        node->value->update(dt);
+        node = node->next;
+    }
 }
 
 void Game::createRobot(Vector3 pos) {
@@ -137,44 +141,35 @@ void Game::createPallet(Vector3 pos) {
     ui->upgradePalletRewardCost = &pallet->uPalletRewardCost;
 }
 
-void Game::checkListenerActions(KListener *keyListener, MListener *mouseListener) {
+void Game::checkListenerActions() {
 
-    if (keyListener->current == keyListener->b_ && mouseListener->LEFTCLICK) {
-        if (robots.length() == 0 || robots.getTailValue()->conveyor && robots.getTailValue()->pallet) {
+    auto tail = robots.getTail();
 
-            raycaster.setFromCamera(mouse, camera);
-            auto intersects = raycaster.intersectObjects(scene->children);
-            if (!intersects.empty()) {
-                Vector3 worldPos = intersects.front().point;
-                createRobot(worldPos);
-                keyListener->current = 0;
+    if (mouseListener.LEFTCLICK) {
+        auto intersects = castRay();
+        if (intersects.empty()) {
+            return; // No actions to perform when there are no intersections
+        }
+
+        if (keyListener.current == keyListener.r_) {
+            if (robots.length() == 0 || tail->value->conveyor && tail->value->pallet) {
+                createRobot(intersects.front().point);
+                keyListener.current = 0;
             }
         }
-    }
 
-    if (keyListener->current == keyListener->n_ && mouseListener->LEFTCLICK) {
-        if (robots.length() > 0 && !robots.getTailValue()->conveyor) {
-
-            raycaster.setFromCamera(mouse, camera);
-            auto intersects = raycaster.intersectObjects(scene->children);
-            if (!intersects.empty()) {
+        if (robots.length() > 0) {
+            if (keyListener.current == keyListener.c_ && !tail->value->conveyor) {
                 createConveyor(intersects.front().point);
-                keyListener->current = 0;
+                keyListener.current = 0;
             }
 
-        }
-    }
-    if (keyListener->current == keyListener->m_ && mouseListener->LEFTCLICK) {
-        if (robots.length() > 0 && !robots.getTailValue()->pallet) {
-
-            raycaster.setFromCamera(mouse, camera);
-            auto intersects = raycaster.intersectObjects(scene->children);
-            if (!intersects.empty()) {
+            if (keyListener.current == keyListener.p_ && !tail->value->pallet) {
                 createPallet(intersects.front().point);
-                keyListener->current = 0;
+                keyListener.current = 0;
             }
-        }
-    }
+        } // robots.length() > 0
+    } // mouseListener.LEFTCLICK
 }
 
 void Game::checkUpgrades() {
@@ -212,4 +207,9 @@ void Game::checkUpgrades() {
         }
         ui->upgradeRobotSpeed = false;
     }
+}
+
+std::vector<Intersection> Game::castRay() {
+    raycaster.setFromCamera(mouse, camera);
+    return raycaster.intersectObjects(scene->children);
 }

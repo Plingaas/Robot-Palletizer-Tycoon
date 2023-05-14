@@ -80,7 +80,7 @@ public:
      * @param item A const reference to the item being added.
      * @return void.
      */
-    void addItem(std::shared_ptr<Item> item) {
+    void addItem(const std::shared_ptr<Item> &item) {
         items.insertAtTail(item);
         itemCount++;
     }
@@ -106,7 +106,7 @@ public:
      * @param item A const reference to the item to be placed.
      * @return A Vector3 with the position to place at.
      */
-    [[nodiscard]] Vector3 nextPosition(const std::shared_ptr<Item> &item);
+    [[nodiscard]] Vector3 nextPosition(const std::shared_ptr<Item> &item) const;
 
     /**
      * @brief Gets the value of the full pallet reward.

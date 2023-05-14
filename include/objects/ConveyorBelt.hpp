@@ -1,7 +1,7 @@
 #ifndef ROBOTCONTROLLER_CONVEYORBELT_HPP
 #define ROBOTCONTROLLER_CONVEYORBELT_HPP
 
-#include "items/ItemGenerator.hpp"
+#include "items/Items.hpp"
 /**
  * @brief Represents a conveyor belt.
  *
