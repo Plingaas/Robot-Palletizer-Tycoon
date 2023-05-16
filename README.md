@@ -1,4 +1,3 @@
-# Kandidatnr: 10005
 # Robot Palletizer Tycoon & Chris Annin Robot Arm Visualization
 
 This repository houses two distinct yet interconnected components:
