@@ -5,7 +5,7 @@
 #include <iostream>
 
 int main() {
-
+    
     std::array<int, 3> serialData{};
 
     char* port = nullptr;
@@ -80,6 +80,4 @@ int main() {
     serial_thread.join();
 #endif // WIN32
     app_thread.join();
-
-
 }

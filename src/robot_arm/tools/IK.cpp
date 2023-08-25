@@ -201,7 +201,12 @@ namespace AR2 {
     // Solves the inverse kinematics for a given position (x, y, z).
     Angles IK(const Vector3 &pos, const Matrix3 &R_target) {
 
-        Vector3 j3_offset = Vector3{0.0f, 0.0f, -(a5 + a6)}.applyMatrix3(R_target);
+
+        //Vector3 j3_offset = Vector3{0.0f, 0.0f, -(a5 + a6)}.applyMatrix3(R_target);
+
+        Matrix3 newR_target = R_target;
+        newR_target = newR_target.invert();
+        Vector3 j3_offset = Vector3{a5+a6, 0.0f, 0.0f}.applyMatrix3(newR_target);
         Vector3 j3_pos = pos - j3_offset;
 
         return IK0_3(j3_pos, R_target);
@@ -232,7 +237,10 @@ namespace AR2 {
     }
 
     Angles IK3_6(const Vector3 &angles, const Matrix3 &R_target) {
-        Matrix3 R3_6 = getR3_6(angles, R_target);
+
+        Matrix3 Local_R_Target = R_target;
+        Local_R_Target = Local_R_Target.premultiply(P6_0);
+        Matrix3 R3_6 = getR3_6(angles, Local_R_Target);
 
         float r13 = R3_6.elements[2];
         float r23 = R3_6.elements[5];

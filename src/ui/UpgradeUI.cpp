@@ -2,14 +2,16 @@
 #include <iostream>
 void UpgradeUI::onRender() {
 
-    ImGui::SetNextWindowSize(ImVec2(240, 220));
+    ImGui::SetNextWindowSize(ImVec2(260, 220));
     ImGui::Begin("");
     ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_None;
 
-    ImGui::Text("Purchase - Left click to spawn");
-    ImGui::Text("B -> Spawn a robot.");
-    ImGui::Text("N -> Spawn a pallet.");
-    ImGui::Text("M -> Spawn a conveyor.");
+    ImGui::Text("To spawn - Key + Left Click");
+    ImGui::Text("(R) Robot,");
+    ImGui::SameLine();
+    ImGui::Text("(C) Conveyor,");
+    ImGui::SameLine();
+    ImGui::Text("(P) Pallet");
 
     ImGui::Text("Upgrades");
     if (upgradeRobotSpeedCost != nullptr) {

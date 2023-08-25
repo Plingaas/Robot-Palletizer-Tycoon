@@ -53,7 +53,7 @@ void Robot::goTo(float x, float y, float z) {
 
 void Robot::goTo(Vector3 pos) {
     Vector3 relative_pos = pos - basePos;
-    Angles angles = IK(relative_pos, DOWN_LONG_X);
+    Angles angles = IK(relative_pos, LOOKDOWN);
 
     goToAngles(angles);
     currentPos = pos;

@@ -16,8 +16,8 @@ namespace AR2 {
     const float a5 = 36.25f;
 
     //const float a6 = 52.0f; // End effector full length is 64
-    const float a6 = 0.0f; // temporary use
-    const float a7 = 32.66f; // End effector pinch offset;
+    const float a6 = 30.0f; // temporary use
+    const float a7 = 0.0f; // End effector pinch offset;
 
     // LINK MAX ROTATION LIMITS
     const float J1_LOWER_LIMIT = -2.96705972839f; // -170 deg
@@ -109,13 +109,46 @@ namespace AR2 {
                     1, 0, 0
             };
 
-    static const Matrix3 DOWN_LONG_X
+    static const Matrix3 P6_0_Inverse
+            {
+                    0, 0, 1,
+                    0, 1, 0,
+                    -1, 0, 0
+            };
+
+    static const Matrix3 DOWN_SHORT_X
+            {
+                    0, 0, 1,
+                    0, 1, 0,
+                    -1, 0, 0
+            };
+    static const Matrix3 LOOKFORWARD
+            {
+                    1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1
+            };
+
+    static const Matrix3 LOOKDOWN
+            {
+                    0, 0, 1,
+                    0, 1, 0,
+                    -1, 0, 0
+            };
+
+    static const Matrix3 LOOKLEFT
+            {
+                    0, -1, 0,
+                    1, 0, 0,
+                    0, 0, 1
+            };
+
+    static const Matrix3 LOOKRIGHT
             {
                     0, 1, 0,
                     -1, 0, 0,
                     0, 0, 1
             };
-
     /**
      * @brief Represents the angles for the robot's joints.
      *

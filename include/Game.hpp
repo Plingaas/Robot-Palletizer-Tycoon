@@ -44,7 +44,7 @@ private:
 
     Raycaster raycaster;
 
-    float money = 2000.0f;
+    float money = 999999999.0f;
 
 protected:
 
